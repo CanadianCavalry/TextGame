@@ -3,7 +3,6 @@ Created on Jun 30, 2014
 
 @author: Thomas
 '''
-import sys
 import BaseClasses
 import World
 
@@ -15,7 +14,7 @@ thirdRoom = BaseClasses.Area("Third Room", "You are standing in a teal room. The
 
 secondRoom.addItem(BaseClasses.Item("rusty key", "This key has seen better days.", "An old rusty key lying on the ground.", 1, "key,rusty key,old key"))
 
-firstRoom.connect("west",BaseClasses.Link(secondRoom))
+firstRoom.connect("west",BaseClasses.Link("west door", "A fairly flimsy wooden door. It's painted pink", "door,west door, pink door, wood door",secondRoom))
 secondRoom.connect("east",BaseClasses.Link(firstRoom))
 
 firstRoom.connect("east",BaseClasses.Link(thirdRoom))

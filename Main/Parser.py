@@ -26,19 +26,19 @@ class Parser(object):
                 self.target += line.lower() + " "
             self.target = self.target.strip()
         
-        if self.command == "go":
+        if (self.command == "go") or (self.command == "travel") or (self.command == "move") or (self.command == "walk"):
             self.command = "go"
             return
-        elif (self.command == "get") or (self.command == "take"):
+        elif (self.command == "get") or (self.command == "take") or (self.command == "acquire") or (self.command == "grab") or (self.command == "fetch") or (self.command == "procure") or (self.command == "attain"):
             self.command = "get"
             return
-        elif (self.command == "inventory") or (self.command == "inv") or (self.command == "i"):
+        elif (self.command == "inventory") or (self.command == "inv") or (self.command == "i") or (self.command == "items") or (self.command == "stuff"):
             self.command = "inventory"
             return
-        elif (self.command == "look") or (self.command == "examine"):
+        elif (self.command == "look") or (self.command == "examine") or (self.command == "check") or (self.command == "scrutinize") or (self.command == "analyze") or (self.command == "inspect"):
             self.command = "look"
             return
-        elif (self.command == "drop"):
+        elif (self.command == "drop") or (self.command == "discard") or (self.command == "ditch"):
             self.command = "drop"
             return
         return

@@ -5,11 +5,11 @@ def go(player, keyword):
             matching.append(item)
 
     if len(matching) == 0:
-        print "You do not see any such item here."
+        print "You can't go that way."
     elif len(matching) > 1:
         print "You need to be more specific"
     elif len(matching) == 1:
-        
+        matching[0].travel()
         if player.currentLocation.visited == False:     #Next check if this is their first time in this area
             player.currentLocation.visited = True
             look(player, "")
