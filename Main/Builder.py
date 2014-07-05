@@ -4,20 +4,28 @@ Created on Jun 30, 2014
 @author: Thomas
 '''
 import BaseClasses
-import World
+from Main import StandardFeatures
 
 INTRO = "You step into a small room with blue walls. There are two doors, one to the west and one to the east."
 
-firstRoom = BaseClasses.Area("First Room", "You are standing in a blue room. There is a door to the east and a door to the west.")        #This is test code
-secondRoom = BaseClasses.Area("Second Room", "You are standing in a red room. There is a door to the east.")
-thirdRoom = BaseClasses.Area("Third Room", "You are standing in a teal room. There is a door to the west.")
+firstRoom = BaseClasses.Area("First Room", "You are standing in a blue room. There is a door to the east and a door to the north.")        #This is test code
+secondRoom = BaseClasses.Area("Second Room", "You are standing in a red room. There is a door to the west.")
+thirdRoom = BaseClasses.Area("Third Room", "You are standing in a teal room. There is a door to the south.")
 
-secondRoom.addItem(BaseClasses.Item("rusty key", "This key has seen better days.", "An old rusty key lying on the ground.", 1, "key,rusty key,old key"))
+rustyKey = BaseClasses.Key("rusty key", "This key has seen better days.", "An old rusty key.", 1, "key,rusty key,old key", "With some force, the key turns in the lock with a satisfying click.")
+secondRoom.addItem(rustyKey)
 
-firstRoom.connect("west",BaseClasses.Link("west door", "A fairly flimsy wooden door. It's painted pink", "door,west door, pink door, wood door",secondRoom))
-secondRoom.connect("east",BaseClasses.Link(firstRoom))
+link100A = StandardFeatures.StandardOpenDoor("A fairly flimsy wooden door. It's painted pink. First Room", "east,door,east door,pink door,wood door")
+link100B = StandardFeatures.StandardOpenDoor("A flimsy looking wood door. The pink paint has mostly faded. Second Room", "west,door,west door,pink door,wood door")
 
-firstRoom.connect("east",BaseClasses.Link(thirdRoom))
-thirdRoom.connect("west",BaseClasses.Link(firstRoom))
+link101A = StandardFeatures.StandardLockedDoor("A heavy looking steel door. It's dark grey. The words 'South Side' have been carved into it.", "north,door,north door,green door,steel door", rustyKey, "The door seems to be locked.")
+link101B = StandardFeatures.StandardLockedDoor("A heavy looking steel door. It's dark grey. The words 'North Side' have been carved into it.", "south,door,south door,green door,steel door", rustyKey, "The door seems to be locked.")
+link101A.makeSibling(link101B)
+
+firstRoom.connect(secondRoom, link100A)
+secondRoom.connect(firstRoom, link100B)
+
+firstRoom.connect(thirdRoom, link101A)
+thirdRoom.connect(firstRoom, link101B)
 
 player = BaseClasses.Player(firstRoom)   #Create the user and set his location

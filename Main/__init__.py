@@ -1,6 +1,6 @@
 import sys
 import BaseClasses
-import World
+from Main import StandardFeatures
 import Commands
 import Parser
 import Builder
@@ -37,8 +37,16 @@ while True:                                         #This is the main game loop
     
     inputParser.parse(userInput)
     
+    print inputParser.command
+    print inputParser.target
+    print inputParser.recipient
+    
     if inputParser.command == "go":
         Commands.go(Builder.player, inputParser.target)
+    elif inputParser.command == "use":
+        Commands.use(Builder.player, inputParser.target)
+    elif inputParser.command == "use on":
+        Commands.useOn(Builder.player, inputParser.target, inputParser.recipient)
     elif (inputParser.command == "get"):
         Commands.get(Builder.player, inputParser.target)
     elif (inputParser.command == "inventory"):
@@ -47,5 +55,7 @@ while True:                                         #This is the main game loop
         Commands.look(Builder.player, inputParser.target)
     elif inputParser.command == "drop":
         Commands.drop(Builder.player, inputParser.target)
+    elif inputParser.command == "open":
+        Commands.open(Builder.player, inputParser.target)
     else:
         print "I don't understand that."

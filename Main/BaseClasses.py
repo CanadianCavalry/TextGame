@@ -27,12 +27,10 @@ class Player(object):
         self.hitPoints -= damageNumber
         
     def addItem(self, itemToAdd):
-        if type(itemToAdd) == Item:
-            self.inventory[itemToAdd.keywords] = itemToAdd
+        self.inventory[itemToAdd.keywords] = itemToAdd
         
     def removeItem(self, itemToRemove):
-        if type(itemToRemove) == Item:
-            del self.inventory[itemToRemove.keywords]
+        del self.inventory[itemToRemove.keywords]
         
 
 class Area(object):
@@ -44,22 +42,22 @@ class Area(object):
         self.connectedAreas = {}
         self.features = {}
         self.itemsContained = {}
+        
+    def lookAt(self):
+        return self.description
+        
+    def connect(self, area, link):
+        link.setDestination(area)
+        self.connectedAreas[link.keywords] = link
             
-    def connect(self, direction, link):
-        if type(link) == Link:
-            self.connectedAreas[direction] = link
-            
-    def disconnect(self, direction):
-        if type(direction) == str:
-            del self.connectedAreas[direction]
+    def disconnect(self, link):
+        del self.connectedAreas[link.keywords]
+        link.destination = None
     
     def addItem(self, itemToAdd):
-        if type(itemToAdd) == Item:
-            self.itemsContained[itemToAdd.keywords] = itemToAdd
+        self.itemsContained[itemToAdd.keywords] = itemToAdd
         
     def removeItem(self, itemToRemove):
-        if type(itemToRemove) != Item:
-            return
         del self.itemsContained[itemToRemove.keywords]
 
 class Item(object):
@@ -70,73 +68,157 @@ class Item(object):
         self.seenDescription = seenDescription
         self.quantity = quantity
         self.keywords = keywords
+        
+    def get(self, player):
+        player.addItem(self)
+        player.currentLocation.removeItem(self)
+        return "You pick up the " + self.name
     
-    def __str__(self):
+    def drop(self, player):
+        player.removeItem(self)
+        player.currentLocation.addItem(self)
+        return "You drop the " + self.name
+    
+    def lookAt(self):
         return self.description
+    
+    def use(self):
+        return "You cannot use that item."
     
 class Weapon(Item):
     
     def __init__(self, name, description, seenDescription, quantity, keywords, damageRating, size):
         self.damageRating = damageRating
         self.size = size
-        super(Item, self).__init__(self, name, description, seenDescription, quantity, keywords)
+        super(Weapon, self).__init__(name, description, seenDescription, quantity, keywords)
         
 class RangedWeapon(Weapon):
     
     def __init__(self, name, description, seenDescription, quantity, keywords, damageRating, size, capacity):
         self.capacity = capacity
-        super(Weapon, self).__init__(self, name, description, seenDescription, quantity, keywords, damageRating)
+        super(RangedWeapon, self).__init__(name, description, seenDescription, quantity, keywords, damageRating)
                             #Me name es Wayne Purkle coz when I nommin' grapes day be PURKLE!!!#  Oh yes it does smeghead
 class MeleeWeapon(Weapon):
 
     def __init__(self, name, description, seenDescription, quantity, keywords, damageRating, size, accuracy):
         self.accuracy = accuracy
-        super(Weapon, self).__init__(self, name, description, seenDescription, quantity, keywords, damageRating)
+        super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, damageRating)
     
-class Consumable(Item):
+class Usable(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, useDescription):
+    def __init__(self, name, description, seenDescription, quantity, keywords, useDescription):
         self.useDescription = useDescription
-        super(Consumable, self).__init__(self, name, description, seenDescription, quantity)
+        super(Usable, self).__init__(name, description, seenDescription, quantity, keywords)
+        
+    def use(self):
+        pass
+    
+    def useOn(self):
+        pass
+        
+class Key(Usable):
+    
+    def __init__(self, name, description, seenDescription, quantity, keywords, useDescription):
+        super(Key, self).__init__(name, description, seenDescription, quantity, keywords, useDescription)
+        
+    def use(self):
+        return "Use the key on what?"
+    
+    def useOn(self, recipient):
+        if isinstance(recipient, Door):
+            return recipient.unlock(self)
+        else:
+            return "You cannot use the key on that."
         
 class Feature(object):
     
     def __init__(self, name, description, keywords):
-        self.name = name
-        self.description = description    
+        self.description = description
+        self.keywords = keywords
+        
+    def lookAt(self):
+        return self.description
+    
+    def use(self):
+        return "You cannot do that."
+    
+    def useOn(self,):
+        return "You cannot do that."
     
 class Container(Feature):
     
-    def __init__(self, name, description, keywords, itemsContained, isAccessible, blockedDesc):
-        self.itemsContained = itemsContained
-        self.isAccessible = isAccessible
-        self.blockedDesc = blockedDesc
-        super(Feature, self).__init__(self, name, description, keywords)
+    def __init__(self, description, keywords, isOpen):
+        self.itemsContained = {}
+        self.isOpen = isOpen
+        super(Container, self).__init__(description, keywords)
         
-class Link(Feature):
+    def addItem(self, item):
+        self.itemsContained[item.keywords] = item
+        
+    def lookAt(self):
+        desc = self.description
+        if self.isOpen:
+            desc += " The drawer is open. Inside you see:\n"
+            for item in self.itemsContained:
+                desc += item.name + "\n"
+        return desc
     
-    def __init__(self, name, description, keywords, destination, isAccessible, blockedDesc):
-        self.destination = destination
-        self.inAccessible = isAccessible
-        self.blockedDesc = blockedDesc
-        super(Feature, self).__init__(self, name, description, keywords)
+    def open(self):
+        if self.isOpen:
+            return "The drawer is already open."
+        else:
+            self.isOpen = True
+            desc = "The drawer opens easily. Inside you see:"
+            for item in self.itemsContained:
+                desc += item.name + "\n"
+        return desc
+        
+    
+    def close(self, player):
+        if self.isOpen:
+            return "The drawer is already closed."
+        else:
+            self.isOpen = False
+            return "You slide the drawer closed."
+            
+class Link(object):
+    
+    def __init__(self, description, keywords):
+        self.description = description
+        self.destination = None
+        self.keywords = keywords
+        
+    def lookAt(self):
+        return self.description
         
     def travel(self, player):
-        if not self.isAccessible:
-            print self.blockedDesc
-            return
+            player.currentLocation = self.destination
+            return True
+            
+    def setDestination(self, area):
+        self.destination = area
         
-        player.currentLocation = self.destination
-        return
-        
-    def getArea(self):
-        return self.destination
+    def open(self, player):
+        return "You can't open that."
     
 class Door(Link):
     
-    def __init__(self, name, description, keywords, destination, isAccessible, blockedDesc):
-        self.destination = destination
-        self.inAccessible = isAccessible
+    def __init__(self, description, keywords, isAccessible, blockedDesc):
+        self.isAccessible = isAccessible
         self.blockedDesc = blockedDesc
-        super(Link, self).__init__(self, name, description, keywords, destination, isAccessible, blockedDesc)
+        super(Door, self).__init__(description, keywords)
         
+    def lookAt(self):
+        desc = self.description
+        desc += " It seems to be "
+        if self.isAccessible:
+            desc += "unlocked."
+        else:
+            desc += "locked."
+        return desc
+        
+    def unlock(self, usedItem):
+        return "That door does not have a lock."
+    
+    def open(self, player):
+        self.travel(player)

@@ -1,7 +1,8 @@
 def go(player, keyword):
     matching = list()
     for key,item in player.currentLocation.connectedAreas.iteritems():
-        if keyword in key:
+        keyList = key.split(",")
+        if keyword in keyList:
             matching.append(item)
 
     if len(matching) == 0:
@@ -9,35 +10,19 @@ def go(player, keyword):
     elif len(matching) > 1:
         print "You need to be more specific"
     elif len(matching) == 1:
-        matching[0].travel()
-        if player.currentLocation.visited == False:     #Next check if this is their first time in this area
-            player.currentLocation.visited = True
-            look(player, "")
-        else:
-            print player.currentLocation.name
+        if matching[0].travel(player):
+            if player.currentLocation.visited == False:     #Next check if this is their first time in this area
+                player.currentLocation.visited = True
+                look(player, "")
+            else:
+                print player.currentLocation.name
     return
 
-def get(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.itemsContained.iteritems():
-        if keyword in key:
-            matching.append(item)
-    
-    if len(matching) == 0:
-        print "You do not see any such item here."
-    elif len(matching) > 1:
-        print "You need to be more specific"
-    elif len(matching) == 1:
-        player.addItem(matching[0])
-        player.currentLocation.removeItem(matching[0])
-        print "You pick up the " + keyword
-    
-    return
-
-def drop(player, keyword):
+def use(player, keyword):
     matching = list()
     for key,item in player.inventory.iteritems():
-        if keyword in key:
+        keyList = key.split(",")
+        if keyword in keyList:
             matching.append(item)
             
     if len(matching) == 0:
@@ -45,9 +30,112 @@ def drop(player, keyword):
     elif len(matching) > 1:
         print "You need to be more specific"
     elif len(matching) == 1:
-        player.removeItem(matching[0])
-        player.currentLocation.addItem(matching[0]) 
-        print "You drop the " + matching[0].name
+        print matching[0].use()
+    return
+
+def useOn(player, targetKeyword, recipientKeyword):
+    matchingInv = list()
+    for key,item in player.inventory.iteritems():           #first we find the item to be used, which will be an item
+        keyList = key.split(",")
+        if targetKeyword in keyList:
+            matchingInv.append(item)
+            
+    if len(matchingInv) > 1:
+        print "You need to be more specific"
+        return
+    elif len(matchingInv) == 1:
+        target = matchingInv[0]
+    else:
+        matchingRoom = list()
+        for key,item in player.currentLocation.itemsContained.iteritems():          #didn't find the item in the players inventory, so we
+            keyList = key.split(",")                                                #search the room for it
+            if targetKeyword in keyList:
+                matchingRoom.append(item)
+                
+        if len(matchingRoom) == 0:
+            print "You do not have any such item."
+            return
+        elif len(matchingRoom) > 1:
+            print "You need to be more specific"
+            return
+        elif len(matchingRoom) == 1:
+            target = matchingRoom[0]                                            #by here we have found the item to use if it exists
+        
+    matchingFeatures = list()
+    for key,item in player.currentLocation.features.iteritems():          #now we find the recipient, which will be a feature or link
+        keyList = key.split(",")
+        if recipientKeyword in keyList:
+            matchingFeatures.append(item)
+            
+    if len(matchingFeatures) > 1:
+        print "You need to be more specific."
+        return
+    elif len(matchingFeatures) == 1:
+        recipient = matchingFeatures[0]
+    else:
+        matchingLinks = list()                                                   #didn't find the recipient in the features list, so we
+        for key,item in player.currentLocation.connectedAreas.iteritems():      #search in the links list
+            keyList = key.split(",")
+            if recipientKeyword in keyList:
+                matchingLinks.append(item)
+                
+        if len(matchingLinks) == 0:
+            print "You do not see anything like that here."
+            return
+        elif len(matchingLinks) > 1:
+            print "You need to be more specific"
+            return
+        elif len(matchingLinks) == 1:
+            recipient = matchingLinks[0]
+            
+    print target.useOn(recipient)
+    return
+
+def get(player, keyword):
+    matching = list()
+    for key,item in player.currentLocation.itemsContained.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+    
+    if len(matching) == 0:
+        print "You do not see any such item here."
+    elif len(matching) > 1:
+        print "You need to be more specific"
+    elif len(matching) == 1:
+        print matching[0].get(player)
+    return
+
+def drop(player, keyword):
+    matching = list()
+    for key,item in player.inventory.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    if len(matching) == 0:
+        print "You do not have any such item."
+    elif len(matching) > 1:
+        print "You need to be more specific"
+    elif len(matching) == 1:
+        print matching[0].drop(player)
+    return
+
+def open(player, keyword):
+    matching = list()
+    for key,item in player.currentLocation.connectedAreas.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    if len(matching) == 0:
+        print "You do not see anything like that here."
+    elif len(matching) > 1:
+        print "You need to be more specific"
+    elif len(matching) == 1:
+        print matching[0].open(player)
+
+
 
 def inventory(player):
     if len(player.inventory) == 0:
@@ -69,40 +157,56 @@ def look(player, keyword):
                 print item.seenDescription
         return     
     
-    matchingFeat = list()
+    matching = list()
     for key,item in player.currentLocation.features.iteritems():        #Check for features that match
-        if keyword in key:
-            matchingFeat.append(item)
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
             
-    if len(matchingFeat) > 1:
+    if len(matching) > 1:
         print "You need to be more specific"
         return
-    elif len(matchingFeat) == 1:
-        print matchingFeat[0].description
+    elif len(matching) == 1:
+        print matching[0].lookAt()
+        return
+    
+    matchingLinks = list()
+    for key,item in player.currentLocation.connectedAreas.iteritems():        #Check for features that match
+        keyList = key.split(",")
+        if keyword in keyList:
+            matchingLinks.append(item)
+            
+    if len(matchingLinks) > 1:
+        print "You need to be more specific"
+        return
+    elif len(matchingLinks) == 1:
+        print matchingLinks[0].lookAt()
         return
     
     matchingItems = list()
     for key,item in player.currentLocation.itemsContained.iteritems():  #Check for items in the room that match
-        if keyword in key:
+        keyList = key.split(",")
+        if keyword in keyList:
             matchingItems.append(item)
             
     if len(matchingItems) > 1:
         print "You need to be more specific"
         return
     elif len(matchingItems) == 1:
-        print matchingItems[0].description
+        print matchingItems[0].lookAt()
         return
        
     matchingInv = list()
     for key,item in player.inventory.iteritems():               #Check for items in inventory that match
-        if keyword in key:
+        keyList = key.split(",")
+        if keyword in keyList:
             matchingInv.append(item)
 
     if len(matchingInv) > 1:
         print "You need to be more specific"
         return
     elif len(matchingInv) == 1:
-        print matchingInv[0].description
+        print matchingInv[0].lookAt()
         return
        
     else:
