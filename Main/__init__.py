@@ -56,6 +56,6 @@ while True:                                         #This is the main game loop
     elif inputParser.command == "drop":
         Commands.drop(Builder.player, inputParser.target)
     elif inputParser.command == "open":
-        Commands.open(Builder.player, inputParser.target)
+        Commands.openThing(Builder.player, inputParser.target)
     else:
         print "I don't understand that."

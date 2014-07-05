@@ -8,18 +8,14 @@ import BaseClasses
 class StandardOpenDoor(BaseClasses.Door):
     
     def __init__(self, description, keywords):
-        super(StandardOpenDoor, self).__init__(description, keywords, True, "")
+        super(StandardOpenDoor, self).__init__(description, keywords, True, "", "You open the door and step through.")
+
         
 class StandardLockedDoor(BaseClasses.Door):
     
-    def __init__(self, description, keywords, itemToOpen, blockedDesc):
+    def __init__(self, description, keywords, itemToOpen):
         self.itemToOpen = itemToOpen
-        self.siblingLink = None
-        super(StandardLockedDoor, self).__init__(description, keywords, False, blockedDesc)
-        
-    def makeSibling(self, sibling):
-        self.siblingLink = sibling
-        sibling.siblingLink = self
+        super(StandardLockedDoor, self).__init__(description, keywords, False, "The door is locked. It won't budge.", "You open the door and step through.")
         
     def unlock(self, usedItem):
         if usedItem == self.itemToOpen:
@@ -27,20 +23,10 @@ class StandardLockedDoor(BaseClasses.Door):
             return usedItem.useDescription
         else:    
             return "The key does not appear to work for this door."
-                
-    def travel(self, player):
-        if self.isAccessible == False:
-            print self.blockedDesc
-            return False
-        
-        player.currentLocation = self.destination
-        return True
     
 class StandardNightStand(BaseClasses.Container):
     
-    def __init__(self, isOpen):
+    def __init__(self):
         description = "A small wooden nightstand. The top is littered with a manner of small items such as pens, books and bits of paper."
         keywords = "night stand,nightstand,drawer"
-        super(StandardNightStand, self).__init__(description, keywords, isOpen)
-        
-    
+        super(StandardNightStand, self).__init__(description, keywords, False, True, "")

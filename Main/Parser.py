@@ -56,6 +56,9 @@ class Parser(object):
         elif (self.command == "open"):
             self.command = "open"
             return
+        elif (self.command == "close"):
+            self.command = "close"
+            return
         elif (self.command == "inventory") or (self.command == "inv") or (self.command == "i") or (self.command == "items") or (self.command == "stuff"):
             self.command = "inventory"
             return

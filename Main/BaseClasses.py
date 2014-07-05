@@ -44,7 +44,13 @@ class Area(object):
         self.itemsContained = {}
         
     def lookAt(self):
-        return self.description
+        desc = self.name
+        desc += "\n" + self.description
+        if self.itemsContained:
+            desc += "\nThings you see here:"
+            for item in self.itemsContained.itervalues():    #Display all the visible items
+                desc += "\n" + item.seenDescription
+        return desc
         
     def connect(self, area, link):
         link.setDestination(area)
@@ -59,6 +65,12 @@ class Area(object):
         
     def removeItem(self, itemToRemove):
         del self.itemsContained[itemToRemove.keywords]
+        
+    def addFeature(self, featureToAdd):
+        self.features[featureToAdd.keywords] = featureToAdd
+        
+    def removeFeature(self, featureToRemove):
+        del self.features[featureToRemove.keywords]
 
 class Item(object):
     
@@ -132,7 +144,7 @@ class Key(Usable):
         
 class Feature(object):
     
-    def __init__(self, name, description, keywords):
+    def __init__(self, description, keywords):
         self.description = description
         self.keywords = keywords
         
@@ -147,7 +159,7 @@ class Feature(object):
     
 class Container(Feature):
     
-    def __init__(self, description, keywords, isOpen):
+    def __init__(self, description, keywords, isOpen, isAccessible, openDesc):
         self.itemsContained = {}
         self.isOpen = isOpen
         super(Container, self).__init__(description, keywords)
@@ -160,20 +172,19 @@ class Container(Feature):
         if self.isOpen:
             desc += " The drawer is open. Inside you see:\n"
             for item in self.itemsContained:
-                desc += item.name + "\n"
+                desc += item.seenDescription + "\n"
         return desc
     
-    def open(self):
+    def open(self, player):
         if self.isOpen:
             return "The drawer is already open."
         else:
             self.isOpen = True
-            desc = "The drawer opens easily. Inside you see:"
-            for item in self.itemsContained:
-                desc += item.name + "\n"
+            desc = "The drawer opens easily. Inside you see:\n"
+            for item in self.itemsContained.itervalues():
+                desc += item.seenDescription + "\n"
         return desc
-        
-    
+
     def close(self, player):
         if self.isOpen:
             return "The drawer is already closed."
@@ -183,18 +194,33 @@ class Container(Feature):
             
 class Link(object):
     
-    def __init__(self, description, keywords):
+    def __init__(self, description, keywords, isAccessible, blockedDesc, travelDesc):
         self.description = description
-        self.destination = None
         self.keywords = keywords
+        self.isAccessible = isAccessible
+        self.blockedDesc = blockedDesc
+        self.travelDesc = travelDesc
+        self.destination = None
+        self.siblingLink = None
         
     def lookAt(self):
         return self.description
         
     def travel(self, player):
-            player.currentLocation = self.destination
-            return True
+        if self.isAccessible == False:
+            return self.blockedDesc
+        
+        desc = self.travelDesc + "\n\n"
+        player.currentLocation = self.destination
+        if player.currentLocation.visited == False:
+            player.currentLocation.visited = True
+            desc += player.currentLocation.lookAt()
+        return desc
             
+    def makeSibling(self, sibling):
+        self.siblingLink = sibling
+        sibling.siblingLink = self
+        
     def setDestination(self, area):
         self.destination = area
         
@@ -203,10 +229,8 @@ class Link(object):
     
 class Door(Link):
     
-    def __init__(self, description, keywords, isAccessible, blockedDesc):
-        self.isAccessible = isAccessible
-        self.blockedDesc = blockedDesc
-        super(Door, self).__init__(description, keywords)
+    def __init__(self, description, keywords, isAccessible, blockedDesc, travelDesc):
+        super(Door, self).__init__(description, keywords, isAccessible, blockedDesc, travelDesc)
         
     def lookAt(self):
         desc = self.description
@@ -221,4 +245,7 @@ class Door(Link):
         return "That door does not have a lock."
     
     def open(self, player):
-        self.travel(player)
+        return self.travel(player)
+    
+    def close(self, player):
+        return "The door is already closed."
