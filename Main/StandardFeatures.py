@@ -3,7 +3,7 @@ Created on Jun 29, 2014
 
 @author: Thomas
 '''
-import BaseClasses
+from Main import BaseClasses
 
 class StandardOpenDoor(BaseClasses.Door):
     
@@ -24,9 +24,39 @@ class StandardLockedDoor(BaseClasses.Door):
         else:    
             return "The key does not appear to work for this door."
     
-class StandardNightStand(BaseClasses.Container):
+class UnlockedContainer(BaseClasses.Container):
     
-    def __init__(self):
-        description = "A small wooden nightstand. The top is littered with a manner of small items such as pens, books and bits of paper."
-        keywords = "night stand,nightstand,drawer"
-        super(StandardNightStand, self).__init__(description, keywords, False, True, "")
+    def __init__(self, description, keywords, openDesc, closeDesc):
+        super(UnlockedContainer, self).__init__(description, keywords, False, True, "",openDesc, closeDesc)
+        
+class LockedContainer(BaseClasses.Container):
+    
+    def __init__(self, description, keywords, blockedDesc, openDesc, closeDesc, itemToOpen):
+        self.itemToOpen = itemToOpen
+        super(LockedContainer, self).__init__(description, keywords, False, False, blockedDesc, openDesc, closeDesc)
+        
+    def unlock(self, usedItem):
+        if usedItem == self.itemToOpen:
+            self.isAccessible = True
+            return usedItem.useDescription
+        else:
+            return "That key does not seem to fit the lock."
+        
+class AlwaysOpenContainer(BaseClasses.Container):
+    
+    def __init__(self, description, keywords):
+        super(AlwaysOpenContainer, self).__init__(description, keywords, True, True, "", "", "")
+        
+    def open(self):
+        return "You can't open that."
+    
+    def close(self):
+        return "You can't close that."
+    
+    def lookAt(self):
+        desc = self.description
+        if self.itemsContained:
+            desc += "On it you see:\n"
+            for item in self.itemsContained.itervalues():
+                desc += item.seenDescription + "\n"
+        return desc

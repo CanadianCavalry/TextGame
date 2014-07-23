@@ -1,61 +1,73 @@
-import sys
+import os
+import pyglet
 import BaseClasses
-from Main import StandardFeatures
+import StandardFeatures
 import Commands
 import Parser
 import Builder
 
-print "Welcome!\nThis terrible text based game is brought to you by Dylan and Thomas."
-print "Please select an option by typing it's number:"
+global SAVEGAME_FILENAME
+SAVEGAME_FILENAME = 'save.json'
 
-while True:
-    selection = raw_input("1 - Start a New Game\n2 - Continue your last game(currently unavailable)\n3 - Read the manual(currently unavailable\n\n")
-    
-    if selection == "1":
-        print "Loading..."
-        break
-    
-    elif selection == "2":
-        print "Sorry, that feature is not yet available.(learn to read)"
-        continue
-    
-    elif selection == "3":
-        print "Sorry, that feature is not yet available.(learn to read)"
-        continue
+def newGame():
+    state = BaseClasses.GameState()
+    Builder.buildWorld(state)
+    state.addPlayer(BaseClasses.Player(state.areaList[0]))
+    return state
 
-    else:
-        print "That is not a valid option."
-
-print Builder.INTRO
-
-inputParser = Parser.Parser()
-
-while True:                                         #This is the main game loop
-    print ""
-    userInput = raw_input()                         #Next wait for them to tell us what they want to do
-    userInput = userInput.split()                   #Break apart their input into the action and the target(or object)
+def main():
+    window = pyglet.window.Window()
+    document = pyglet.text.document.FormattedDocument("Hello there")
+    textBox = pyglet.text.layout.IncrementalTextLayout(document, width = window.width - 50, height = window.height - 50, multiline = True)
+    @window.event
+    def on_draw():
+        window.clear()
+        textBox.draw()
+        
+    pyglet.app.run()
     
-    inputParser.parse(userInput)
+    print "Welcome!\nThis terrible text based game is brought to you by Dylan and Thomas."
+    print "Please select an option by entering it's number:"
     
-    print inputParser.command
-    print inputParser.target
-    print inputParser.recipient
+    while True:
+        selection = raw_input("1 - Start a New Game\n2 - Continue your last game\n3 - Read the manual(currently unavailable\n\n")
+        
+        if selection == "1":
+            print "Loading..."
+            state = newGame()                       #create a new game state and build the world
+            parser = Parser.Parser()                #set up the parser
+            parser.loadState(state)
+            print Builder.INTRO                     #display the intro
+            gameLoop(parser)
+        
+        elif selection == "2":
+            if not os.path.isfile(SAVEGAME_FILENAME):
+                print "There is no existing saved game."
+                continue
+            else:
+                print "Loading saved game..."
+                state = Commands.load()
+                parser = Parser.Parser()
+                parser.loadState(state)
+                print "Game loaded"
+                gameLoop(parser)
+        
+        elif selection == "3":
+            print "Sorry, that feature is not yet available.(learn to read)"
+            continue
     
-    if inputParser.command == "go":
-        Commands.go(Builder.player, inputParser.target)
-    elif inputParser.command == "use":
-        Commands.use(Builder.player, inputParser.target)
-    elif inputParser.command == "use on":
-        Commands.useOn(Builder.player, inputParser.target, inputParser.recipient)
-    elif (inputParser.command == "get"):
-        Commands.get(Builder.player, inputParser.target)
-    elif (inputParser.command == "inventory"):
-        Commands.inventory(Builder.player)
-    elif inputParser.command == "look":
-        Commands.look(Builder.player, inputParser.target)
-    elif inputParser.command == "drop":
-        Commands.drop(Builder.player, inputParser.target)
-    elif inputParser.command == "open":
-        Commands.openThing(Builder.player, inputParser.target)
-    else:
-        print "I don't understand that."
+        else:
+            print "That is not a valid option."
+    
+def gameLoop(inputParser):
+    while True:                                         #This is the main game loop
+        print ""
+        
+        userInput = raw_input()                         #Wait for the user to tell us what they want to do
+        inputParser.parse(userInput)                    #hand the input over to the main parser, which calls the neccessary commands
+        
+        #print inputParser.command     <--- Debug print commands
+        #print inputParser.target
+        #print inputParser.recipient
+        
+main()
