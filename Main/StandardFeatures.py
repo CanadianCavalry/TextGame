@@ -3,15 +3,15 @@ Created on Jun 29, 2014
 
 @author: Thomas
 '''
-from Main import BaseClasses
+from Main import AreasFeatures
 
-class StandardOpenDoor(BaseClasses.Door):
+class StandardOpenDoor(AreasFeatures.Door):
     
     def __init__(self, description, keywords):
         super(StandardOpenDoor, self).__init__(description, keywords, True, "", "You open the door and step through.")
 
         
-class StandardLockedDoor(BaseClasses.Door):
+class StandardLockedDoor(AreasFeatures.Door):
     
     def __init__(self, description, keywords, itemToOpen):
         self.itemToOpen = itemToOpen
@@ -20,16 +20,37 @@ class StandardLockedDoor(BaseClasses.Door):
     def unlock(self, usedItem):
         if usedItem == self.itemToOpen:
             self.isAccessible = True
-            return usedItem.useDescription
+            return usedItem.useDescription,True
         else:    
             return "The key does not appear to work for this door."
+class StandardUpwardStairs(AreasFeatures.Link):
     
-class UnlockedContainer(BaseClasses.Container):
+    def __init__(self, description, keywords):
+        super(StandardUpwardStairs, self).__init__(description, keywords, True, "", "You climb the stairs.")
+    
+    def open(self, player):
+        return "I can't open that"
+    
+    def climb(self, player):
+        self.travel(player)
+    
+class StandardDownwardStairs(AreasFeatures.Link):
+    
+    def __init__(self, description, keywords):
+        super(StandardDownwardStairs, self).__init__(description, keywords, True, "", "You descend the stairs.")
+    
+    def open(self, player):
+        return "I can't open that"
+    
+    def descend(self, player):
+        self.travel(player)
+    
+class UnlockedContainer(AreasFeatures.Container):
     
     def __init__(self, description, keywords, openDesc, closeDesc):
         super(UnlockedContainer, self).__init__(description, keywords, False, True, "",openDesc, closeDesc)
         
-class LockedContainer(BaseClasses.Container):
+class LockedContainer(AreasFeatures.Container):
     
     def __init__(self, description, keywords, blockedDesc, openDesc, closeDesc, itemToOpen):
         self.itemToOpen = itemToOpen
@@ -38,11 +59,11 @@ class LockedContainer(BaseClasses.Container):
     def unlock(self, usedItem):
         if usedItem == self.itemToOpen:
             self.isAccessible = True
-            return usedItem.useDescription
+            return usedItem.useDescription,True
         else:
             return "That key does not seem to fit the lock."
         
-class AlwaysOpenContainer(BaseClasses.Container):
+class AlwaysOpenContainer(AreasFeatures.Container):
     
     def __init__(self, description, keywords):
         super(AlwaysOpenContainer, self).__init__(description, keywords, True, True, "", "", "")
