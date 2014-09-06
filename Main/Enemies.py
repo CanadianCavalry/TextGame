@@ -5,6 +5,12 @@ Created on Aug 3, 2014
 '''
 from random import randint
 
+def enemyAction(player):
+    resultString = ""
+    for enemy in player.currentLocation.enemies.itervalues():
+        resultString += enemy.takeAction(player) + "\n"
+    return resultString
+
 class Enemy(object):
     
     def __init__(self, name, description, seenDescription, keywords, maxHealth, minDamage, maxDamage, accuracy, speed, dodgeChance, armor):
@@ -44,17 +50,23 @@ class Enemy(object):
         resultString = "It attacks you.\n"
         hitChance = self.accuracy - player.dodgeChance
         if player.isDefending:
-            hitChance -= 20
+            hitChance = self.playerIsDefending(hitChance)
             
         attackRoll = randint(0,100)
         if attackRoll <= hitChance:
             damageAmount = randint(self.minDamage + 1, self.maxDamage)
+            if player.armor:
+                damageAmount -= player.armor.armorRating
+            
             resultString += "It hits you! "
             resultString += player.takeDamage(damageAmount)
         else:
             resultString += "It misses."
             
         return resultString
+        
+    def playerIsDefending(self, hitChance):
+        return hitChance - 20
         
     def advance(self):
         if self.distanceToPlayer > 1:
@@ -124,10 +136,10 @@ class TestDemon(Enemy):
         description = "A slavering, red skinned, bat winged demon. Pretty standard stuff actually."
         seenDescription = "You see a Winged Demon glaring at you menacingly."
         keywords = "demon,red demon,winged demon"
-        maxHealth = 50
-        minDamage = 9
-        maxDamage = 14
-        accuracy = 60
+        maxHealth = 125
+        minDamage = 15
+        maxDamage = 19
+        accuracy = 65
         speed = 1
         dodgeChance = 5
         armor = 0

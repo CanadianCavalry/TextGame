@@ -23,6 +23,7 @@ class StandardLockedDoor(AreasFeatures.Door):
             return usedItem.useDescription,True
         else:    
             return "The key does not appear to work for this door."
+        
 class StandardUpwardStairs(AreasFeatures.Link):
     
     def __init__(self, description, keywords):
@@ -68,10 +69,10 @@ class AlwaysOpenContainer(AreasFeatures.Container):
     def __init__(self, description, keywords):
         super(AlwaysOpenContainer, self).__init__(description, keywords, True, True, "", "", "")
         
-    def open(self):
+    def open(self, player):
         return "You can't open that."
     
-    def close(self):
+    def close(self, player):
         return "You can't close that."
     
     def lookAt(self):

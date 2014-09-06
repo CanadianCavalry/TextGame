@@ -73,3 +73,13 @@ The Rejuvenax they have been giving us seems to have to failed to silence my cra
 Astrid, it's only right for Astrid to pamper herself even more than usual, no?\""
         keywords = "astrid,woman,tall woman,slender woman,occupant,resident"
         super(Astrid106, self).__init__(name, description, seenDescription, talkResponse, keywords)
+        
+class Rose108(NPCs.NPC):
+    
+    def __init__(self):
+        name = "Rose"
+        description = "A waifish teen who likes to dress in punk clothing, Rose is typically a very quiet and withdrawn soul."
+        seenDescription = "You see Rose sitting on the ground with her arms around her legs, staring off into space."
+        talkResponse = "She doesn't even look up. \"Yeah, sorry\", she says in a dead, toneless voice. \"I don't really want to talk to anyone right now. Please leave me alone.\""
+        keywords = "rose,resident,occupant,woman,girl"
+        super(Rose108, self).__init__(name, description, seenDescription, talkResponse, keywords)

@@ -1,11 +1,50 @@
-from Main import AreasFeatures
+import AreasFeatures
 
-def go(player, keyword):
-    matching = list()
+def findMatchingInventory(player, keyword, matching):
+    for key,item in player.inventory.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+
+    return matching
+    
+def findMatching(player, keyword, matching):
     for key,item in player.currentLocation.connectedAreas.iteritems():
         keyList = key.split(",")
         if keyword in keyList:
             matching.append(item)
+
+    for key,item in player.currentLocation.itemsContained.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    for key,item in player.currentLocation.enemies.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    for key,item in player.currentLocation.NPCs.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    for key,item in player.currentLocation.features.iteritems():
+        keyList = key.split(",")
+        if keyword in keyList:
+            matching.append(item)
+            
+    for feature in player.currentLocation.features.itervalues():
+        if (isinstance(feature, AreasFeatures.Container)) and (feature.isOpen == True):
+            for key,item in feature.itemsContained.iteritems():
+                keyList = key.split(",")
+                if keyword in keyList:
+                    matching.append(item)
+            
+    return matching
+
+def go(player, keyword):
+    matching = findMatching(player, keyword, list())
 
     if len(matching) == 0:
         return "You can't go that way."
@@ -18,22 +57,11 @@ def go(player, keyword):
             return "I can't do that."
 
 def use(player, keyword):
-    matching = list()
-    for key,item in player.inventory.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-        
-    for key,item in player.currentLocation.itemsContained.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
             
     if len(matching) == 0:
-        return "You do not have any such item."
+        return "You do not see anything like that."
     elif len(matching) > 1:
         return "You need to be more specific"
     elif len(matching) == 1:
@@ -121,11 +149,7 @@ def get(player, keyword):
             return "You can't pick that up."
 
 def drop(player, keyword):
-    matching = list()
-    for key,item in player.inventory.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatchingInventory(player, keyword, list())
             
     if len(matching) == 0:
         return "You do not have any such item."
@@ -138,19 +162,7 @@ def drop(player, keyword):
             return "You can't drop that right now."
 
 def attack(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.enemies.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
-    for key,item in player.currentLocation.NPCs.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
             
     if len(matching) == 0:
         return "There is nothing like that here."
@@ -162,15 +174,28 @@ def attack(player, keyword):
         except AttributeError:
             return "I see no reason to attack that right now."
 
+def shoot(player, keyword):
+    matching = findMatching(player, keyword, list())
+            
+    if len(matching) == 0:
+        return "There is nothing like that here."
+    elif len(matching) > 1:
+        return "You need to be more specific"
+    elif len(matching) == 1:
+        try:
+            return player.attack(matching[0])
+        except AttributeError:
+            return "I see no reason to attack that right now."
+
+def reload(player):
+        return player.reload()
+
 def defend(player):
     return player.defend()
 
 def advance(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.enemies.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
     
     if len(matching) == 0:
         return "There is nothing like that here."
@@ -183,11 +208,8 @@ def advance(player, keyword):
             return "That isn't an enemy."
     
 def retreat(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.enemies.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
             
     if len(matching) == 0:
         return "There is nothing like that here."
@@ -200,11 +222,7 @@ def retreat(player, keyword):
             return "That isn't an enemy."
             
 def equip(player, keyword):
-    matching = list()
-    for key,item in player.inventory.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatchingInventory(player, keyword, list())
             
     if len(matching) == 0:
         return "You do not have any such item."
@@ -217,19 +235,8 @@ def equip(player, keyword):
             return "That isn't something you can equip."
 
 def openThing(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.connectedAreas.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-        
-    for key,item in player.currentLocation.features.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
         
     if len(matching) == 0:
         return "You do not see anything like that here."
@@ -242,19 +249,8 @@ def openThing(player, keyword):
             return "You can't open that."
 
 def closeThing(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.connectedAreas.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-        
-    for key,item in player.currentLocation.features.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
         
     if len(matching) == 0:
         return "You do not see anything like that here."
@@ -267,19 +263,8 @@ def closeThing(player, keyword):
             return "You can't close that."
 
 def drink(player, keyword):
-    matching = list()
-    for key,item in player.inventory.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-    
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
-    for key,item in player.currentLocation.itemsContained.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
     
     if len(matching) == 0:
         return "You do not see any such item here."
@@ -295,19 +280,8 @@ def wait(player):
     return player.wait()
 
 def read(player, keyword):
-    matching = list()
-    for key,item in player.inventory.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-    
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
-    for key,item in player.currentLocation.itemsContained.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
     
     if len(matching) == 0:
         return "You do not see any such item here."
@@ -320,32 +294,32 @@ def read(player, keyword):
             return "That isn't something you can read."
     
 def talk(player, keyword):
-    matching = list()
-    for key,item in player.currentLocation.NPCs.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
     
     if len(matching) > 1:
         return "You need to be more specific"
     elif len(matching) == 0:
         return "You do not see anyone like that here."
     elif len(matching) == 1:
-        return matching[0].talk()
+        try:
+            return matching[0].talk()
+        except AttributeError:
+            return "I don't think it's very likely to respond."
     
 def ask(player, keyword, dialogueKeyword):
-    matching = list()
-    for key,item in player.currentLocation.NPCs.iteritems():
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
     
     if len(matching) > 1:
         return "You need to be more specific"
     elif len(matching) == 0:
         return "You do not see anyone like that here."
     elif len(matching) == 1:
-        return matching[0].ask(dialogueKeyword)
+        try:
+            return matching[0].ask(dialogueKeyword)
+        except AttributeError:
+            return "I don't think it's very likely to respond."
     
 def inventory(player):
     if len(player.inventory) == 0:
@@ -357,59 +331,11 @@ def inventory(player):
     return inventoryString
 
 def stats(player):
-    healthString = "Health: "
-    if player.health >= 95:
-        healthString += "Perfect"
-    elif player.health >= 85:
-        healthString += "A few scratches"
-    elif player.health >= 60:
-        healthString += "Minor Injuries"
-    elif player.health >= 35:
-        healthString += "Major Injuries"
-    elif player.health >= 10:
-        healthString += "Grievous Wounds"
-    elif player.health >= 1:
-        healthString += "Dying"
-        
-    intoxicationString = "Intoxication: "
-    if player.intoxication == 0:
-        intoxicationString += "Sober"
-    elif player.intoxication < 10:
-        intoxicationString += "Tipsy"
-    elif player.intoxication < 25:
-        intoxicationString += "Buzzed"
-    elif player.intoxication < 40:
-        intoxicationString += "Drunk"
-    elif player.intoxication < 60:
-        intoxicationString += "Very Drunk"
-    elif player.intoxication < 80:
-        intoxicationString += "Hammered"
-    elif player.intoxication < 90:
-        intoxicationString += "Blacked Out"
-    elif player.intoxication < 100:
-        intoxicationString += "Near Lethal"
-        
-    spiritString = "Spiritual Strength: "
-    if player.spiritualStrength >= 90:
-        spiritString += "Saint Like"
-    elif player.spiritualStrength >= 75:
-        spiritString += "Pious"
-    elif player.spiritualStrength >= 68:
-        spiritString += "Faithful"
-    elif player.spiritualStrength >= 59:
-        spiritString += "Good"
-    elif player.spiritualStrength >= 50:
-        spiritString += "Lukewarm"
-    elif player.spiritualStrength >= 40:
-        spiritString += "Impure"
-    elif player.spiritualStrength >= 30:
-        spiritString += "Sinful"
-    elif player.spiritualStrength >= 20:
-        spiritString += "Evil"
-    elif player.spiritualStrength >= 1:
-        spiritString += "Diabolical"
-    elif player.spiritualStrength == 0:
-        spiritString += "Satanic"
+    healthString = "Condition: " + player.getCondition()
+    
+    spiritString = "Spiritual Strength: " + player.getSpirit()
+
+    intoxicationString = "Intoxication: " + player.getIntoxication()
         
     mainHandString = "Main hand: "
     if player.mainHand:
@@ -431,8 +357,8 @@ def stats(player):
         
     statString = healthString + "\n"
     statString += intoxicationString + "\n"
-    statString += spiritString + "\n"
-    statString += mainHandString + "\n\n"
+    statString += spiritString + "\n\n"
+    statString += mainHandString + "\n"
     statString += offHandString + "\n"
     statString += armorString + "\n"
     return statString
@@ -441,62 +367,11 @@ def look(player, keyword):
     if keyword == "":                                                       #Check if this is a general look command
         return player.currentLocation.lookAt()                               # if it is, describe the room and items in it     
     
-    matching = list()
-    for key,item in player.currentLocation.features.iteritems():        #Check for features that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
+    matching = findMatching(player, keyword, list())
+    matching = findMatchingInventory(player, keyword, matching)
             
     if len(matching) > 1:
         return "You need to be more specific"
-    
-    for key,item in player.currentLocation.connectedAreas.iteritems():        #Check for links that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
-    for key,item in player.currentLocation.itemsContained.iteritems():  #Check for items in the room that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-       
-    for key,item in player.inventory.iteritems():               #Check for items in inventory that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-
-    for feature in player.currentLocation.features.itervalues():
-        if (isinstance(feature, AreasFeatures.Container)) and (feature.isOpen == True):
-            for key,item in feature.itemsContained.iteritems():
-                keyList = key.split(",")
-                if keyword in keyList:
-                    matching.append(item)
-                    
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
-    for key,item in player.currentLocation.NPCs.iteritems():        #Check for features that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    for key,item in player.currentLocation.enemies.iteritems():        #Check for features that match
-        keyList = key.split(",")
-        if keyword in keyList:
-            matching.append(item)
-            
-    if len(matching) > 1:
-        return "You need to be more specific"
-    
     if len(matching) == 0:
         return "You don't see anything like that here."
     if len(matching) > 1:

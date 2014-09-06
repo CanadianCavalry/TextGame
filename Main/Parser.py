@@ -4,7 +4,7 @@ Created on Jun 30, 2014
 @author: Thomas
 '''
 import Commands
-import Main
+import StateControl
 
 class Parser(object):
     
@@ -52,6 +52,8 @@ class Parser(object):
         
         if (self.command == "go") or (self.command == "travel") or (self.command == "move") or (self.command == "walk"):
             resultString = Commands.go(self.state.player, self.target)
+        elif (self.command == "north") or (self.command == "south") or (self.command == "east") or (self.command == "west"):
+            resultString = Commands.go(self.state.player, self.command)
         elif (self.command == "use") or (self.command == "activate"):
             resultString = Commands.use(self.state.player, self.target)
         elif (self.command == "use on"):
@@ -61,7 +63,9 @@ class Parser(object):
         elif (self.command == "drop") or (self.command == "discard") or (self.command == "ditch"):
             resultString = Commands.drop(self.state.player, self.target)
         elif (self.command == "attack"):
-            resultString = Commands.attack(self.state.player,self.target)
+            resultString = Commands.attack(self.state.player, self.target)
+        elif (self.command == "shoot"):
+            resultString = Commands.shoot(self.state.player, self.target)
         elif (self.command == "defend") or (self.command == "guard"):
             resultString = Commands.defend(self.state.player)
         elif (self.command == "advance"):
@@ -91,9 +95,9 @@ class Parser(object):
         elif (self.command == "char") or (self.command == "stats"):
             resultString = Commands.stats(self.state.player)
         elif (self.command == "save"):
-            resultString = Main.save(self.state)
+            resultString = StateControl.save(self.state)
         elif (self.command == "quit") or (self.command == "exit"):
-            resultString = Main.quit()
+            resultString = StateControl.quit()
         else:
             resultString = "I don't understand that."
             

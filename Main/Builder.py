@@ -3,7 +3,7 @@ Created on Jun 30, 2014
 
 @author: Thomas
 '''
-from Main import AreasFeatures
+import AreasFeatures
 import StandardFeatures
 import UniqueFeatures
 import StandardItems
@@ -12,32 +12,40 @@ import Enemies
 import UniqueNPCs
 import NPCs
 
-INTRO = "September 3rd, 2015. You wake up around 10 a.m. as usual, and have already ate and freshened up for the day. You recall that the new Director of the Rehab\n House - Father Malachi - is going to be giving a talk outlining why he and his associates have implemented new policies in House management, and will be\n taking questions afterwards. The architect of many new regulations you find draconian and invasive, this will be the first time the director\n has made an appearance to you and the other residents. You plan to attend the talk to get a better idea of the nature\n of the man who will control much of your life in the forseeable future. The talk is taking place in fifteen minutes, and is located\n in the auditorium of the old church wing. You recall that the easiest way to get there is to simply head north through the residents wing,\n past the courtyard, until you reach the auditorium.<paragraph break> You are currently located in your quarters\n in the resident wing of the house. Like virtually every other service offered by the house, they spared no expense in providing\n the residents with a fine place to live. Your quarters are large, fully furnished, and even come with a personal computer\n and a large plasma TV. Right now, you are craving some alcohol. This is surprising as the new medication, 'Rejuvinax', that\n father Malachi has been providing you with has been practically miraculous in controlling your cravings, to the point of you hardly being aware of them.\nIt's an exquisite longing that is more pronounced than anything you've felt since your time here. Odd. Why would you b experiencing symptoms like this now, completely out of nowhere?"
-
-def buildWorld(gameState):
+def buildCombatSimulator(gameState):
     
     #Combat Test Environment
-    combatRoom = AreasFeatures.Area("Combat Simulator", "You are standing in a large, empty colosseum. There are no doors, and the walls are far to high to climb.")    
+    armory = AreasFeatures.Area("Armory", "This tiny, cramped room is lined on all sides by large steel cages packed with weapons of every kind. Sadly, they are all locked. On the small table in the center of the room is a small collection of items. There is a door to the north.")
+    arenaDoorA = StandardFeatures.StandardOpenDoor("A heavy steel door. It appears to have some sort of mechanism built into it that locks it once you pass through.", "north,north door,door,metal door,steel door")
+    
+    table = StandardFeatures.AlwaysOpenContainer("The table is littered with all manner of useless junk, although there are a few weapons on it. You also spy a metal sign attached to the side of it.", "table,small table")
+    armory.addFeature(table)
+    sign = AreasFeatures.Feature("The sign reads \"Please ensure you are prepared before continuing to the test arena. Good luck\"", "sign,metal sign")
+    armory.addFeature(sign)
     
     fireAxe = StandardItems.Axe()
     chefKnife = StandardItems.Knife()
-    handgun = StandardItems.Handgun()
-    book = StandardItems.Book("A Book", "Its a book", "A book", 1, "book", )
-    page1 = StandardItems.Page("This is the first page, its pretty boring.")
-    page2 = StandardItems.Page("This is the second page. It's actually super exciting!")
-    book.addPage(page1)
-    book.addPage(page2)
+    handgun = StandardItems.Revolver()
+    leatherJacket = StandardItems.LeatherJacket()
     
-    combatRoom.addItem(fireAxe)
-    combatRoom.addItem(chefKnife)
-    combatRoom.addItem(handgun)
-    combatRoom.addItem(book)
+    table.addItem(fireAxe)
+    table.addItem(chefKnife)
+    table.addItem(handgun)
+    table.addItem(leatherJacket)
+    
+    combatRoom = AreasFeatures.Area("Arena", "You are standing in a large, empty colosseum. There is a single, steel door to the south.")    
+    arenaDoorB = StandardFeatures.StandardLockedDoor("A heavy steel door. It has no handle or lock that you can see.", "door,metal door,steel door", None)
+    arenaDoorB.makeSibling(arenaDoorA)
+    combatRoom.connect(armory, arenaDoorB)
+    armory.connect(combatRoom, arenaDoorA)
     
     testDemon = Enemies.TestDemon()
     combatRoom.spawnEnemy(testDemon)
-   #gameState.addArea(combatRoom)
+    
+    gameState.addArea(armory)
 
-
+def buildWorld(gameState):
+    
     #JACOBS ROOM
     jacobsRoom101 = AreasFeatures.Area("Jacob's Room", "This small room is well furnished with all of the comforts \
 you could ask for, including a bed, bookshelf, coffee table, dresser, tv and \
@@ -85,7 +93,7 @@ to the west leading to the residential wing.")
     coffeeTable101.addItem(rejuvinaxNote101)
     journal101 = Items.Item("Journal", "To be filled", "My journal", 1, "journal")
     coffeeTable101.addItem(journal101)
-    flaskOfScotch101 = StandardItems.Alchohol("Flask of Scotch", "A small silver flask which holds about 4 oz. I received this as a gift from a friend form church before they realized \nI had a problem. I'm sure they regretted giving it to me once they found out.", "A small silver flask of whiskey.", 1, "flask,whiskey,silver flask,flask of whiskey,alcohol,booze", "You unscrew the cap and drain the remaining liquid from the flask. Delicious.",10)
+    flaskOfScotch101 = StandardItems.Alchohol("Flask of Scotch", "A small silver flask which holds about 4 oz. I received this as a gift from a friend form church before they realized I had a problem. I'm sure they regretted giving it to me once they found out.", "A small silver flask of scotch.", 1, "flask,whiskey,scotch,silver flask,flask of scotch,alcohol,booze", "You unscrew the cap and drain the remaining liquid from the flask. Delicious.",10)
     closet101.addItem(flaskOfScotch101)
     leatherJacket101 = StandardItems.LeatherJacket()
     closet101.addItem(leatherJacket101)
@@ -112,10 +120,10 @@ door to the NORTH leads into the Essential Services area of the Residents Wing."
     stairs102A = StandardFeatures.StandardUpwardStairs("A wide, well lit staircase which double back up to the second floor.", "up,upstairs,up stairs,up staircase,staircase,stairs,stairway")
     
     #NPCs
-    securityGuards102 = UniqueNPCs.SecurityGuards102()
-    firstFloorHallway102.addNPC(securityGuards102)
+    firstFloorHallway102.addNPC(UniqueNPCs.SecurityGuards102())
     
     #Features
+    firstFloorHallway102.addFeature(UniqueFeatures.ResidentsWingDoorsFirstFloor())
     
     #Containers
     
@@ -136,8 +144,7 @@ artifacts. The door to the hallway is to the west.")
     cicerosRoom103.connect(firstFloorHallway102, door103A)
     
     #NPCs
-    cicero103 = UniqueNPCs.Cicero103()
-    cicerosRoom103.addNPC(cicero103)
+    cicerosRoom103.addNPC(UniqueNPCs.Cicero103())
     
     #Features
     
@@ -165,6 +172,7 @@ floor of the Residents wing can be accessed through this hallway.")
     #NPCs
     
     #Features
+    secondFloorHallway104.addFeature(UniqueFeatures.ResidentsWingDoorsSecondFloor())
     
     #Containers
     
@@ -183,12 +191,10 @@ The door to the hallway is to the west.")
     michealsRoom105.connect(secondFloorHallway104, door105A)
     
     #NPCs
-    micheal105 = UniqueNPCs.Micheal105()
-    michealsRoom105.addNPC(micheal105)
+    michealsRoom105.addNPC(UniqueNPCs.Micheal105())
     
     #Features
-    mess105 = AreasFeatures.Feature("Everything in this room is completely disgusting. I'd really rather not look to closely.", "mess,garbage,cigarettes,butts,cigarette butts,stuff,food,old food,room,things")    
-    michealsRoom105.addFeature(mess105)
+    michealsRoom105.addFeature(AreasFeatures.Feature("Everything in this room is completely disgusting. I'd really rather not look to closely.", "mess,garbage,cigarettes,butts,cigarette butts,stuff,food,old food,room,things"))
     
     #Containers
     
@@ -209,8 +215,7 @@ her various trophies and awards are arranged; I always think of this as Astrid's
     astridsRoom106.connect(secondFloorHallway104, door106A)
     
     #NPCs
-    astrid106 = UniqueNPCs.Astrid106()
-    astridsRoom106.addNPC(astrid106)
+    astridsRoom106.addNPC(UniqueNPCs.Astrid106())
     
     #Features
     
@@ -234,6 +239,7 @@ her various trophies and awards are arranged; I always think of this as Astrid's
     #NPCs
     
     #Features
+    thirdFloorHallway107.addFeature(UniqueFeatures.ResidentsWingDoorsThirdFloor())
     
     #Containers
     
@@ -241,8 +247,22 @@ her various trophies and awards are arranged; I always think of this as Astrid's
     
     #ROSES ROOM
     rosesRoom108 = AreasFeatures.Area("Room 308",
-"This room belongs to Astrid, a slender, middle aged woman. The place is as immaculate and tidy as ever. Unlike most \
-of the other residents in the House, Astrid has completely rearranged the furnishings in her room to suit her needs. \
-She even got permission from the management to move out one of the two armchairs that come with every room so she could \
-place a tall, gaudy mirror in its place. The centrepiece of the room is a large table upon which pictures of Astrid and \
-her various trophies and awards are arranged; I always think of this as Astrid's shrine to herself. The door to the hallway is to the east.")
+"Rose - a talented artist - has hung up at least a dozen of her works on the walls of this room. Most of them are either charcoal \
+sketches or oil paintings of individuals surrounded by fairylike creatures that evoke the individuals moods. \
+All of the pieces project a lot of raw emotion. There are also a few pictures of Rose's friends, her mother, and a few posters \
+of her favourite bands. The door to the hallway is to the east.")
+    
+    #Links
+    door108A = StandardFeatures.StandardOpenDoor("A hefty blue wooden door.", "east,door,east door,blue door,hallway")
+    door108A.makeSibling(door107A)
+    thirdFloorHallway107.connect(rosesRoom108, door107A)
+    rosesRoom108.connect(thirdFloorHallway107, door108A)
+    
+    #NPCs
+    rosesRoom108.addNPC(UniqueNPCs.Rose108())
+    
+    #Features
+    
+    #Containers
+    
+    #Items

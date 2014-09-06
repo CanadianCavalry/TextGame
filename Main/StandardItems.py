@@ -6,6 +6,7 @@ Created on Jul 5, 2014
 import Items
 import AreasFeatures
 
+#Melee Weapons
 class Axe(Items.MeleeWeapon):
     
     def __init__(self):
@@ -17,17 +18,27 @@ class Knife(Items.MeleeWeapon):
     def __init__(self):
         super(Knife, self).__init__("Knife", "A 12 inch chefs knife. You know what they say: 'Guns are for show, knives are for pro.'",
                                    "A knife.", 1, "knife,chef knife,weapon", 9, 14, 1, 65)
-class Handgun(Items.RangedWeapon):
+        
+#Ranged Weapons
+class Revolver(Items.RangedWeapon):
     
     def __init__(self):
-        super(Handgun, self).__init__("Handgun", "A small calibur handgun. It holds 10 rounds.", "A small handgun",
-                                      1, "gun,handgun,pistol", 20, 30, 1, 60, 10, 10)
+        super(Revolver, self).__init__("Revolver", "A heavy Magnum revolver. It holds 6 rounds.", "A revolver",
+                                      1, "gun,handgun,pistol,revolver,magnum", 30, 38, 1, 70, 6, 4)
 
+#Ammo
+class RevolverAmmo(Items.Ammo):
+    
+    def __init__(self):
+        super(RevolverAmmo, self).__init__("Revolver")
+
+#Armor
 class LeatherJacket(Items.Armor):
     
     def __init__(self):
         super(LeatherJacket, self).__init__("Leather Jacket", "An old, faded brown leather jacket. I've had this for longer than I can remember.", "A faded leather jacket", 1, "armor,jacket,leather jacket", 5)
 
+#Consumables
 class Alchohol(Items.Drinkable):
     
     def __init__(self, name, description, seenDescription, quantity, keywords, useDescription, alcoholAmount):
@@ -40,6 +51,7 @@ class Alchohol(Items.Drinkable):
         player.removeItem(self)
         return self.useDescription,True
     
+#Misc
 class Key(Items.Usable):
     
     def use(self):
