@@ -1,9 +1,8 @@
 import pyglet
-import StateControl
-from time import sleep
+import copy
 import Enemies
 import Parser
-import copy
+import StateControl
 
 class Rectangle(object):
     '''Draws a rectangle into a batch.'''
@@ -227,18 +226,34 @@ class Window(pyglet.window.Window):
             self.focus.caret.mark = 0
             self.focus.caret.position = len(self.focus.document.text)
             
-    def parsePlayerInput(self, userInput):
-            turnResult = self.parser.parse(userInput)
-            try:
-                resultString,turnPassed = turnResult
-            except ValueError:
-                resultString = turnResult
-                turnPassed = False
+    def on_close(self):
+        StateControl.quit()
             
-            if turnPassed:
-                resultString += "\n" + Enemies.enemyAction(self.state.player)
-                self.state.player.beginTurn()
-                if self.state.player.health < 1:
-                    resultString += "\nYou have died...\nPress enter to return to the main menu."
+    def parsePlayerInput(self, userInput):
+        actingEnemies = self.player.getActingEnemies()
+        
+        enemyDestination = self.player.currentLocation
+        pursuingEnemies = self.player.getPursuingEnemies()
+        
+        turnResult = self.parser.parse(userInput)
+        try:
+            resultString,turnPassed = turnResult
+        except ValueError:
+            resultString = turnResult
+            turnPassed = False
+        
+        if turnPassed:
+            if self.parser.command == "go":
+                resultString = "You turn to run...\n" + Enemies.enemyAction(self.state.player, actingEnemies) + "\n" + resultString
+            else:
+                resultString += "\n" + Enemies.enemyAction(self.state.player, actingEnemies)
+            self.state.player.beginTurn()
+            
+            if self.state.player.health < 1:
+                resultString += "\nYou have died...\nPress enter to return to the main menu."
                 
-            self.disp.document.text = resultString
+            if pursuingEnemies:
+                Enemies.enemyMovement(pursuingEnemies, enemyDestination)
+            
+        self.disp.document.text = resultString
+        

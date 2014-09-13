@@ -1,13 +1,6 @@
 import os
 import pyglet
-import Commands
-import Parser
-import Builder
-import AreasFeatures
-import Enemies
-import jsonpickle
 import GUI
-import StateControl
 
 class Player(object):
 
@@ -66,7 +59,7 @@ class Player(object):
         if self.armor == itemToRemove:
             self.armor = None
             
-        for item in self.inventory:
+        for item in self.inventory.itervalues():
             if item != itemToRemove:
                 continue
             
@@ -193,6 +186,22 @@ class Player(object):
         
     def beginTurn(self):
         self.isDefending = False
+        
+    def getActingEnemies(self):
+        enemyList = list()
+        for enemy in self.currentLocation.enemies.itervalues():
+            enemyList.append(enemy)
+        
+        return enemyList
+    
+    def getPursuingEnemies(self):
+        enemyList = list()
+        for link in self.currentLocation.connectedAreas.itervalues():
+            for enemy in link.destination.enemies.itervalues():
+                if not enemy.isChasing:
+                    continue
+                else:
+                    enemyList.append(enemy)
         
 def launch():
     window = GUI.Window(Player())      #start the GUI

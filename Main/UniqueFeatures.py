@@ -3,7 +3,7 @@ Created on Jul 5, 2014
 
 @author: Thomas
 '''
-from Main import AreasFeatures
+import AreasFeatures
 
 #Jacobs Room
 

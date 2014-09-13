@@ -23,14 +23,14 @@ class Knife(Items.MeleeWeapon):
 class Revolver(Items.RangedWeapon):
     
     def __init__(self):
-        super(Revolver, self).__init__("Revolver", "A heavy Magnum revolver. It holds 6 rounds.", "A revolver",
+        super(Revolver, self).__init__("Revolver", "A heavy .457 revolver, Magnum brand. It holds 6 rounds.", "A revolver",
                                       1, "gun,handgun,pistol,revolver,magnum", 30, 38, 1, 70, 6, 4)
 
 #Ammo
 class RevolverAmmo(Items.Ammo):
     
     def __init__(self):
-        super(RevolverAmmo, self).__init__("Revolver")
+        super(RevolverAmmo, self).__init__("Revolver Ammo", "A speed-loader for a six shot revolver. It is filled with .457 ammunition.", "A speed-loader.", 1, "ammo,revolver ammo,magnum ammo,ammunition,revolver ammunition", "Revolver")
 
 #Armor
 class LeatherJacket(Items.Armor):

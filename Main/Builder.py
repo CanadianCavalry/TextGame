@@ -20,21 +20,23 @@ def buildCombatSimulator(gameState):
     
     table = StandardFeatures.AlwaysOpenContainer("The table is littered with all manner of useless junk, although there are a few weapons on it. You also spy a metal sign attached to the side of it.", "table,small table")
     armory.addFeature(table)
-    sign = AreasFeatures.Feature("The sign reads \"Please ensure you are prepared before continuing to the test arena. Good luck\"", "sign,metal sign")
+    sign = StandardFeatures.Sign("A shiny brass plaque that has been riveted to the table. It reads \"Please ensure you are prepared before continuing to the test arena. Good luck\"", "sign,metal sign", "Please ensure you are prepared before continuing to the test arena. Good luck")
     armory.addFeature(sign)
     
     fireAxe = StandardItems.Axe()
     chefKnife = StandardItems.Knife()
-    handgun = StandardItems.Revolver()
+    revolver = StandardItems.Revolver()
+    revolverAmmo = StandardItems.RevolverAmmo()
     leatherJacket = StandardItems.LeatherJacket()
     
     table.addItem(fireAxe)
     table.addItem(chefKnife)
-    table.addItem(handgun)
+    table.addItem(revolver)
+    table.addItem(revolverAmmo)
     table.addItem(leatherJacket)
     
     combatRoom = AreasFeatures.Area("Arena", "You are standing in a large, empty colosseum. There is a single, steel door to the south.")    
-    arenaDoorB = StandardFeatures.StandardLockedDoor("A heavy steel door. It has no handle or lock that you can see.", "door,metal door,steel door", None)
+    arenaDoorB = StandardFeatures.StandardLockedDoor("A heavy steel door. It has no handle or lock that you can see.", "south,door,metal door,steel door", None)
     arenaDoorB.makeSibling(arenaDoorA)
     combatRoom.connect(armory, arenaDoorB)
     armory.connect(combatRoom, arenaDoorA)
@@ -125,9 +127,8 @@ door to the NORTH leads into the Essential Services area of the Residents Wing."
     #Features
     firstFloorHallway102.addFeature(UniqueFeatures.ResidentsWingDoorsFirstFloor())
     
-    #Containers
-    
-    #Items
+    #MAIN LOBBY
+
     
     #ROOM 104
     cicerosRoom103 = AreasFeatures.Area("Room 104",

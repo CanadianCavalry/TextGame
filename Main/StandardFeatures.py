@@ -3,7 +3,7 @@ Created on Jun 29, 2014
 
 @author: Thomas
 '''
-from Main import AreasFeatures
+import AreasFeatures
 
 class StandardOpenDoor(AreasFeatures.Door):
     
@@ -82,3 +82,13 @@ class AlwaysOpenContainer(AreasFeatures.Container):
             for item in self.itemsContained.itervalues():
                 desc += item.seenDescription + "\n"
         return desc
+    
+class Sign(AreasFeatures.Feature):
+    
+    def __init__(self, description, keywords, readDescription):
+        self.readDescription = readDescription
+        
+        super(Sign, self).__init__(description, keywords)
+    
+    def read(self):
+        return self.readDescription

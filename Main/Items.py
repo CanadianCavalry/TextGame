@@ -24,6 +24,9 @@ class Item(object):
         player.currentLocation.addItem(self)
         return "You drop the " + self.name,True
     
+    def destroy(self, player):
+        player.removeItem(self)
+    
     def lookAt(self):
         return self.description
 
@@ -156,7 +159,7 @@ class RangedWeapon(Weapon):
         return self.attack(enemy)
     
     def reload(self, player):
-        for item in player.inventory:
+        for item in player.inventory.itervalues():
             try:
                 weaponType = item.weaponType
             except AttributeError:
@@ -164,6 +167,7 @@ class RangedWeapon(Weapon):
             
             if self.name == weaponType:
                 self.ammoRemaining = self.capacity
+                item.destroy(player)
                 return "You reload the " + self.name + ".",True
             
         return "You don't have any ammo."
@@ -194,8 +198,9 @@ class MeleeWeapon(Weapon):
 
 class Ammo(Item):
     
-    def __init__(self, weaponType):
+    def __init__(self, name, description, seenDescription, quantity, keywords, weaponType):
         self.weaponType = weaponType
+        super(Ammo, self).__init__(name, description, seenDescription, quantity, keywords)
     
 class Usable(Item):
     

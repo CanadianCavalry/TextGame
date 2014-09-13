@@ -5,11 +5,26 @@ Created on Aug 3, 2014
 '''
 from random import randint
 
-def enemyAction(player):
+def getActingEnemies(player):
+    return player.currentLocation.enemies
+
+def getMovingEnemies(player):
+    movingEnemies = list()
+    for link in player.currentLocation.connectedAreas:
+        for enemy in link.destination.enemies:
+            movingEnemies.append(enemy)
+            
+    return movingEnemies
+
+def enemyAction(player, actingEnemies):
     resultString = ""
-    for enemy in player.currentLocation.enemies.itervalues():
+    for enemy in actingEnemies:
         resultString += enemy.takeAction(player) + "\n"
     return resultString
+
+def enemyMovement(movingEnemies, enemyDestination):
+    for enemy in movingEnemies:
+        enemy.travel(enemyDestination)
 
 class Enemy(object):
     
@@ -30,7 +45,16 @@ class Enemy(object):
         self.currentLocation = None
         self.actionTimer = 1
         self.stunnedTimer = 0
-        self.chasing = False
+        self.isChasing = False
+        
+    def travel(self, location):
+        for link in self.currentLocation.connectedAreas.itervalues():
+            if not link.destination == location:
+                continue
+            
+            self.currentLocation.removeEnemy(self)
+            link.travel(self)
+            self.currentLocation.addEnemy(self)
         
     def takeAction(self, player):
         if self.actionTimer == 1:
@@ -42,12 +66,15 @@ class Enemy(object):
                 self.actionTimer = self.speed
         else:
             self.actionTimer -= 1
-            result = "It does nothing."
+            result = "The " + self.name + " does nothing."
         
         return result
 
     def attack(self, player):
-        resultString = "It attacks you.\n"
+        return self.basicAttack(player)
+
+    def basicAttack(self, player):
+        resultString = "The " + self.name + " attacks you.\n"
         hitChance = self.accuracy - player.dodgeChance
         if player.isDefending:
             hitChance = self.playerIsDefending(hitChance)
@@ -58,10 +85,10 @@ class Enemy(object):
             if player.armor:
                 damageAmount -= player.armor.armorRating
             
-            resultString += "It hits you! "
+            resultString += "The " + self.name + " hits you! "
             resultString += player.takeDamage(damageAmount)
         else:
-            resultString += "It misses."
+            resultString += "The " + self.name + " misses."
             
         return resultString
         
@@ -71,18 +98,18 @@ class Enemy(object):
     def advance(self):
         if self.distanceToPlayer > 1:
             self.distanceToPlayer -= 1
-            return "It moves towards you.\n" + self.getDistance()
-        return "It does nothing."
+            return "The " + self.name + " moves towards you.\n" + self.getDistance()
+        return "The " + self.name + " does nothing."
     
     def retreat(self):
         if self.distanceToPlayer < 3:
             self.distanceToPlayer += 1
-            return "It moves away from you.\n" + self.getDistance()
-        return "It does nothing."
+            return "The " + self.name + " moves away from you.\n" + self.getDistance()
+        return "The " + self.name + " does nothing."
         
     def takeHit(self, weapon):
         damageAmount = (randint(weapon.minDamage, weapon.maxDamage)) - (self.armor)
-        resultString = "You hit it! "
+        resultString = "You hit the " + self.name + "!"
         resultString += self.takeDamage(damageAmount)
         return resultString
         
@@ -96,7 +123,7 @@ class Enemy(object):
         
     def kill(self):
         self.currentLocation.killEnemy(self)
-        return "It falls to the ground dead."
+        return "The " + self.name + " falls to the ground dead."
         
     def setLocation(self, location):
         self.currentLocation = location

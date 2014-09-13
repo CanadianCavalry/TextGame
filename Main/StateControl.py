@@ -3,6 +3,7 @@ Created on Sep 5, 2014
 
 @author: Thomas
 '''
+import sys
 import Builder
 import jsonpickle
 
@@ -87,4 +88,4 @@ def loadState(player=None):
         return state
     
 def quit():
-    pass
+    sys.exit()

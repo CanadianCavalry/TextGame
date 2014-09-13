@@ -66,6 +66,8 @@ class Parser(object):
             resultString = Commands.attack(self.state.player, self.target)
         elif (self.command == "shoot"):
             resultString = Commands.shoot(self.state.player, self.target)
+        elif (self.command == "reload"):
+            resultString = Commands.reload(self.state.player)
         elif (self.command == "defend") or (self.command == "guard"):
             resultString = Commands.defend(self.state.player)
         elif (self.command == "advance"):
