@@ -8,34 +8,45 @@ class Player(object):
         self.currentLocation = None
         self.inventory = {}
         self.health = 100
-        self.spiritualStrength = 100
+        self.spirit = 100
         self.intoxication = 0
         self.mainHand = None
         self.offHand = None
         self.dodgeChance = 0
         self.armor = None
+        self.armorRating = 0
         self.isDefending = False
 
     def increaseSpirit(self, amount):
-        self.spiritualStrength += amount
+        self.spirit += amount
+        if self.spirit > 100:
+            self.spirit = 100
         
     def decreaseSpirit(self, amount):
-        self.spiritualStrength -= amount
+        self.spirit -= amount
+        if self.spirit < 0:
+            self.spirit = 0
         
     def heal(self, healNumber):
-        self.health += healNumber    
+        self.health += healNumber
+        if self.health > 100:
+            self.health = 100
         
     def takeDamage(self, damageNumber):
         self.health -= damageNumber
+        if self.health < 0:
+            self.health = 0
         return "You are " + self.getCondition() + "."
         
     def increaseIntox(self, amount):
         self.intoxication += amount
-        self.setDodgeChance(self.calcDodgeChance())
+        if self.intoxication > 100:
+            self.intoxication = 100
         
     def decreaseIntox(self, amount):
         self.intoxication -= amount
-        self.setDodgeChance(self.calcDodgeChance())
+        if self.intoxication < 0:
+            self.intoxication = 0
         
     def setDodgeChance(self, dodgeChance):
         self.dodgeChance = dodgeChance
@@ -73,13 +84,13 @@ class Player(object):
         
     def attack(self, enemy):
         try:
-            return self.mainHand.attack(enemy)
+            return self.mainHand.attack(enemy, self)
         except AttributeError:
             return "You are not holding a weapon."
         
     def shoot(self, enemy):
         try:
-            return self.mainHand.shoot(enemy)
+            return self.mainHand.shoot(enemy, self)
         except AttributeError:
             return "You are not holding a gun."
         
@@ -91,11 +102,16 @@ class Player(object):
                 return "You are not holding a gun."
         else:
             return "You are not holding anything."
-            
         
     def defend(self):
         self.isDefending = True
         return "You take a defensive stance.", True
+        
+    def exorcise(self, enemy):
+        try:
+            return enemy.exorciseAttempt(self), True
+        except AttributeError:
+            return "An error occurred during exorcism."
         
     def advance(self, enemy):
         if enemy.distanceToPlayer > 1:
@@ -137,25 +153,25 @@ class Player(object):
 
     def getSpirit(self):
         spiritString = ""
-        if self.spiritualStrength >= 90:
+        if self.spirit >= 90:
             spiritString += "Saint Like"
-        elif self.spiritualStrength >= 75:
+        elif self.spirit >= 75:
             spiritString += "Pious"
-        elif self.spiritualStrength >= 68:
+        elif self.spirit >= 68:
             spiritString += "Faithful"
-        elif self.spiritualStrength >= 59:
+        elif self.spirit >= 59:
             spiritString += "Good"
-        elif self.spiritualStrength >= 50:
+        elif self.spirit >= 50:
             spiritString += "Lukewarm"
-        elif self.spiritualStrength >= 40:
+        elif self.spirit >= 40:
             spiritString += "Impure"
-        elif self.spiritualStrength >= 30:
+        elif self.spirit >= 30:
             spiritString += "Sinful"
-        elif self.spiritualStrength >= 20:
+        elif self.spirit >= 20:
             spiritString += "Evil"
-        elif self.spiritualStrength >= 1:
+        elif self.spirit >= 1:
             spiritString += "Diabolical"
-        elif self.spiritualStrength == 0:
+        elif self.spirit == 0:
             spiritString += "Satanic"
             
         return spiritString
@@ -183,9 +199,17 @@ class Player(object):
 
     def calcDodgeChance(self):
         return self.dodgeChance
+    
+    def calcArmorRating(self):
+        armorRating = 0
+        if self.armor:
+            armorRating += self.armor.armorRating
+        armorRating += self.intoxication * 0.2
+        return armorRating
         
     def beginTurn(self):
         self.isDefending = False
+        self.armorRating = self.calcArmorRating()
         
     def getActingEnemies(self):
         enemyList = list()

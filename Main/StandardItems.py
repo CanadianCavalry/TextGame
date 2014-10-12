@@ -24,13 +24,13 @@ class Revolver(Items.RangedWeapon):
     
     def __init__(self):
         super(Revolver, self).__init__("Revolver", "A heavy .457 revolver, Magnum brand. It holds 6 rounds.", "A revolver",
-                                      1, "gun,handgun,pistol,revolver,magnum", 30, 38, 1, 70, 6, 4)
+                                      1, "gun,handgun,pistol,revolver,magnum", 30, 38, 1, 70, 6, 4, "Sounds/RevolverShot.mp3")
 
 #Ammo
 class RevolverAmmo(Items.Ammo):
     
     def __init__(self):
-        super(RevolverAmmo, self).__init__("Revolver Ammo", "A speed-loader for a six shot revolver. It is filled with .457 ammunition.", "A speed-loader.", 1, "ammo,revolver ammo,magnum ammo,ammunition,revolver ammunition", "Revolver")
+        super(RevolverAmmo, self).__init__("Revolver Ammo", "A speed-loader for a six shot revolver. It is filled with .457 ammunition.", "A speed-loader.", 1, "ammo,revolver ammo,magnum ammo,ammunition,revolver ammunition,speed-loader,speed loader", "Revolver")
 
 #Armor
 class LeatherJacket(Items.Armor):
@@ -47,7 +47,10 @@ class Alchohol(Items.Drinkable):
         
     def drink(self, player):
         player.increaseIntox(self.alcoholAmount)
-        player.decreaseSpirit(self.alcoholAmount / 2)
+        spiritDecrease = self.alcoholAmount / 2
+        if spiritDecrease > 10:
+            spiritDecrease = 10
+        player.decreaseSpirit(spiritDecrease)
         player.removeItem(self)
         return self.useDescription,True
     

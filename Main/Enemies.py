@@ -4,6 +4,8 @@ Created on Aug 3, 2014
 @author: Thomas
 '''
 from random import randint
+import Items
+import StandardItems
 
 def getActingEnemies(player):
     return player.currentLocation.enemies
@@ -41,11 +43,13 @@ class Enemy(object):
         self.dodgeChance = dodgeChance
         self.armor = armor
         self.health = maxHealth
+        self.baseExorciseChance = 5
         self.distanceToPlayer = 3
         self.currentLocation = None
         self.actionTimer = 1
         self.stunnedTimer = 0
         self.isChasing = False
+        self.exorciseDialogue = ["\"Back to hell with you demon!\"", "\"In the name of god, DIE!\"", "\"With the lord as my weapon, I will destroy you!\""]
         
     def travel(self, location):
         for link in self.currentLocation.connectedAreas.itervalues():
@@ -57,6 +61,10 @@ class Enemy(object):
             self.currentLocation.addEnemy(self)
         
     def takeAction(self, player):
+        if self.stunnedTimer != 0:
+            self.stunnedTimer -= 1
+            return "The " + self.name + " is dazed."
+        
         if self.actionTimer == 1:
             if self.distanceToPlayer == 1:
                 result = self.attack(player)
@@ -109,8 +117,11 @@ class Enemy(object):
         
     def takeHit(self, weapon):
         damageAmount = (randint(weapon.minDamage, weapon.maxDamage)) - (self.armor)
-        resultString = "You hit the " + self.name + "!"
-        resultString += self.takeDamage(damageAmount)
+        if self.stunnedTimer > 0:
+            resultString = self.takeCrit(weapon, damageAmount)
+        else:
+            resultString = "You hit the " + self.name + "!"
+            resultString += self.takeDamage(damageAmount)
         return resultString
         
     def takeDamage(self, damageAmount):
@@ -120,6 +131,29 @@ class Enemy(object):
             return self.kill()
         else:
             return self.getCondition()
+        
+    def takeCrit(self, weapon, damageAmount):
+        if isinstance(weapon, Items.MeleeWeapon):
+            self.health = 0
+            self.kill()
+            return ""
+        
+    def exorciseAttempt(self, player):
+        resultString = "You draw upon your faith to banish the demon. You yell out:\n" + self.exorciseDialogue[randint(0, len(self.exorciseDialogue) - 1)] + "\n"
+        
+        hitChance = self.baseExorciseChance
+        hitChance += (player.spirit - 50)
+        attackRoll = randint(0, 100)
+        if attackRoll <= hitChance:
+            resultString += self.takeExorcise()
+            return resultString
+        else:
+            resultString += "It doesn't seem to have any effect."
+            return resultString
+        
+    def takeExorcise(self):
+        self.stunnedTimer = 2
+        return "It works! The " + self.name + " is dazed."
         
     def kill(self):
         self.currentLocation.killEnemy(self)

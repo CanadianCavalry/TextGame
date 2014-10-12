@@ -193,6 +193,19 @@ def reload(player):
 def defend(player):
     return player.defend()
 
+def exorcise(player, keyword):
+    matching = findMatching(player, keyword, list())
+            
+    if len(matching) == 0:
+        return "There is nothing like that here."
+    elif len(matching) > 1:
+        return "You need to be more specific"
+    elif len(matching) == 1:
+        try:
+            return player.exorcise(matching[0])
+        except AttributeError:
+            return "I can only exorcise demonic creatures."
+
 def advance(player, keyword):
     matching = findMatching(player, keyword, list())
     matching = findMatchingInventory(player, keyword, matching)
@@ -320,7 +333,7 @@ def ask(player, keyword, dialogueKeyword):
             return matching[0].ask(dialogueKeyword)
         except AttributeError:
             return "I don't think it's very likely to respond."
-    
+
 def inventory(player):
     if len(player.inventory) == 0:
         return "You are not carrying anything."

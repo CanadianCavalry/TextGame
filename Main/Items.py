@@ -4,6 +4,7 @@ Created on Aug 22, 2014
 @author: Thomas
 '''
 import random
+import pyglet
 
 class Item(object):
     
@@ -132,22 +133,51 @@ class Weapon(Item):
         
 class RangedWeapon(Weapon):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining):
+    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining, fireSound):
         self.accuracy = accuracy
         self.capacity = capacity
         self.ammoRemaining = ammoRemaining
+        self.fireSound = fireSound
         super(RangedWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size)
                             #Me name es Wayne Purkle coz when I nommin' grapes day be PURKLE!!!
-    def attack(self, enemy):
+    def attack(self, enemy, player):
         if self.ammoRemaining <= 0:
             return "You are out of ammo!"
+        
+        source = pyglet.media.load(self.fireSound, streaming=False)
+        source.play()
         
         self.ammoRemaining -= 1
         resultString = "You open fire."
         hitChance = self.accuracy
         hitChance -= enemy.dodgeChance
+        
+        if enemy.distanceToPlayer == 2:
+            hitChance -= 5
+        if enemy.distanceToPlayer == 3:
+            hitChance -= 10
+            
+        if player.intoxication > 75:
+            hitChance -= 25
+        elif player.intoxication > 60:
+            hitChance -= 15
+        elif player.intoxication > 40:
+            hitChance -= 10
+        elif player.intoxication > 25:
+            hitChance -= 5
+        elif player.intoxication > 10:
+            hitChance += 8
+        elif player.intoxication > 1:
+            hitChance += 5
+        elif player.intoxication > 60:
+            hitChance -= 5
+            
+        if enemy.stunnedTimer > 0:
+            hitChance += 10
+            
         if hitChance < 5:
             hitChance = 5
+            
         attackRoll = random.randint(0, 100)
         if attackRoll <= hitChance:
             resultString += "\n" + enemy.takeHit(self)
@@ -155,8 +185,8 @@ class RangedWeapon(Weapon):
             resultString += "\nYou miss!"
         return resultString, True
     
-    def shoot(self, enemy):
-        return self.attack(enemy)
+    def shoot(self, enemy, player):
+        return self.attack(enemy, player)
     
     def reload(self, player):
         for item in player.inventory.itervalues():
@@ -183,10 +213,30 @@ class MeleeWeapon(Weapon):
         self.accuracy = accuracy
         super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size)   
 
-    def attack(self, enemy):
+    def attack(self, enemy, player):
         resultString = "You swing your weapon."
+        
         hitChance = self.accuracy
         hitChance -= enemy.dodgeChance
+        
+        if player.intoxication > 75:
+            hitChance -= 25
+        elif player.intoxication > 60:
+            hitChance -= 15
+        elif player.intoxication > 40:
+            hitChance -= 10
+        elif player.intoxication > 25:
+            hitChance -= 5
+        elif player.intoxication > 10:
+            hitChance += 8
+        elif player.intoxication > 1:
+            hitChance += 5
+        elif player.intoxication > 60:
+            hitChance -= 5
+        
+        if enemy.stunnedTimer > 0:
+            hitChance += 15
+        
         if hitChance < 5:
             hitChance = 5
         attackRoll = random.randint(0, 100)
