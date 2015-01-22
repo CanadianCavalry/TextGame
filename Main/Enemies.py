@@ -50,6 +50,7 @@ class Enemy(object):
         self.stunnedTimer = 0
         self.isChasing = False
         self.exorciseDialogue = ["\"Back to hell with you demon!\"", "\"In the name of god, DIE!\"", "\"With the lord as my weapon, I will destroy you!\""]
+        self.critDialogue = "You charge forward and knock the creature to the gorund. As it struggles to rise, you finish it off with a single strike."
         
     def travel(self, location):
         for link in self.currentLocation.connectedAreas.itervalues():
@@ -114,11 +115,21 @@ class Enemy(object):
             self.distanceToPlayer += 1
             return "The " + self.name + " moves away from you.\n" + self.getDistance()
         return "The " + self.name + " does nothing."
-        
-    def takeHit(self, weapon):
-        damageAmount = (randint(weapon.minDamage, weapon.maxDamage)) - (self.armor)
+    
+    def takeStun(self, stunTime):
         if self.stunnedTimer > 0:
-            resultString = self.takeCrit(weapon, damageAmount)
+            self.stunnedTimer = stunTime
+        
+    def takeHit(self, weapon, attackType):
+        damageAmount = (randint(weapon.minDamage, weapon.maxDamage))
+        if (self.stunnedTimer > 0) and (attackType == "heavy"):
+            resultString = self.takeCrit(weapon)
+        elif attackType == "heavy":
+            critRoll = randint(0,100)
+            if critRoll <= weapon.critChance:
+                resultString = self.takeCrit(weapon)
+            else:
+                self.takeStun(weapon.stunLength)
         else:
             resultString = "You hit the " + self.name + "!"
             resultString += self.takeDamage(damageAmount)
@@ -132,11 +143,10 @@ class Enemy(object):
         else:
             return self.getCondition()
         
-    def takeCrit(self, weapon, damageAmount):
-        if isinstance(weapon, Items.MeleeWeapon):
-            self.health = 0
-            self.kill()
-            return ""
+    def takeCrit(self, weapon):
+        self.health = 0
+        self.kill()
+        return self.critDialogue[randint(0, len(self.exorciseDialogue) - 1)]
         
     def exorciseAttempt(self, player):
         resultString = "You draw upon your faith to banish the demon. You yell out:\n" + self.exorciseDialogue[randint(0, len(self.exorciseDialogue) - 1)] + "\n"

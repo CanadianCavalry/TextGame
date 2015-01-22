@@ -45,7 +45,7 @@ class Armor(Item):
         return "You equip the " + self.name + ".",True
 
         
-#This is the older equip command which uses raw_input - Not compatable with the current GUI
+#This is the older equip command which uses raw_input - Not compatible with the current GUI
 #     def equip(self, player):
 #         if player.armor:
 #             query = "Unequip your " + player.armor.name + " and equip the " + self.name
@@ -61,9 +61,10 @@ class Armor(Item):
     
 class Weapon(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size):
+    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance):
         self.minDamage = minDamage
         self.maxDamage = maxDamage
+        self.critChance = critChance
         self.size = size
         super(Weapon, self).__init__(name, description, seenDescription, quantity, keywords)
         
@@ -133,14 +134,18 @@ class Weapon(Item):
         
 class RangedWeapon(Weapon):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining, fireSound):
+    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining, fireSound, critChance=10):
         self.accuracy = accuracy
         self.capacity = capacity
         self.ammoRemaining = ammoRemaining
         self.fireSound = fireSound
-        super(RangedWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size)
+        self.rangeMod = [0,5,10]
+        super(RangedWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance)
                             #Me name es Wayne Purkle coz when I nommin' grapes day be PURKLE!!!
-    def attack(self, enemy, player):
+    def attack(self, enemy, player, attackType):
+        if attackType == "heavy":
+            return "You are not holding a melee weapon."
+        
         if self.ammoRemaining <= 0:
             return "You are out of ammo!"
         
@@ -152,10 +157,12 @@ class RangedWeapon(Weapon):
         hitChance = self.accuracy
         hitChance -= enemy.dodgeChance
         
-        if enemy.distanceToPlayer == 2:
-            hitChance -= 5
-        if enemy.distanceToPlayer == 3:
-            hitChance -= 10
+        if enemy.distanceToPlayer == 1:
+            hitChance -= self.rangeMod[0]
+        elif enemy.distanceToPlayer == 2:
+            hitChance -= self.rangeMod[1]
+        elif enemy.distanceToPlayer == 3:
+            hitChance -= self.rangeMod[2]
             
         if player.intoxication > 75:
             hitChance -= 25
@@ -180,10 +187,11 @@ class RangedWeapon(Weapon):
             
         attackRoll = random.randint(0, 100)
         if attackRoll <= hitChance:
-            resultString += "\n" + enemy.takeHit(self)
+            resultString += "\n" + enemy.takeHit(self, "ranged")
         else:
             resultString += "\nYou miss!"
         return resultString, True
+    
     
     def shoot(self, enemy, player):
         return self.attack(enemy, player)
@@ -209,11 +217,12 @@ class RangedWeapon(Weapon):
         
 class MeleeWeapon(Weapon):
 
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy):
+    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, critChance=10, stunLength):
         self.accuracy = accuracy
-        super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size)   
+        self.stunLength = stunLength
+        super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance)   
 
-    def attack(self, enemy, player):
+    def attack(self, enemy, player, attackType):
         resultString = "You swing your weapon."
         
         hitChance = self.accuracy
@@ -233,6 +242,9 @@ class MeleeWeapon(Weapon):
             hitChance += 5
         elif player.intoxication > 60:
             hitChance -= 5
+            
+        if attackType == "heavy":
+            hitChance -= 10
         
         if enemy.stunnedTimer > 0:
             hitChance += 15
@@ -241,7 +253,7 @@ class MeleeWeapon(Weapon):
             hitChance = 5
         attackRoll = random.randint(0, 100)
         if attackRoll <= hitChance:
-            resultString += "\n" + enemy.takeHit(self)
+            resultString += "\n" + enemy.takeHit(self, attackType)
         else:
             resultString += "\nYou miss!"
         return resultString, True

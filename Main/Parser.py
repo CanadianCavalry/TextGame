@@ -43,12 +43,17 @@ class Parser(object):
         
         if len(inputArray) >= 1:    
             for word in inputArray:
-                if ((self.command == "use") and (word == "on")) or ((self.command == "ask") and (word == "about")):                          #check if the command is a two word command
+                if ((self.command == "use") and (word == "on")) or ((self.command == "ask") and (word == "about")):                  #check if the command is a two word command
                     self.command += (" " + word)
                     self.addRecipient(inputArray.index(word) + 1, inputArray)           #Start adding the rest of the words to the recipient, starting with the 
                     break                                                               #position after "on". Then end the loop so we skip the rest of the words
                 self.target += word + " "
             self.target = self.target.strip()
+            
+        if self.command == "heavy":
+            nextCom = inputArray.pop(0)
+            if nextCom == "attack":
+                self.command = "heavy attack"
         
         if (self.command == "go") or (self.command == "travel") or (self.command == "move") or (self.command == "walk"):
             resultString = Commands.go(self.state.player, self.target)
@@ -64,6 +69,8 @@ class Parser(object):
             resultString = Commands.drop(self.state.player, self.target)
         elif (self.command == "attack"):
             resultString = Commands.attack(self.state.player, self.target)
+        elif (self.command == "heavy attack"):
+            resultString = Commands.heavyAttack(self.state.player, self.target)
         elif (self.command == "shoot"):
             resultString = Commands.shoot(self.state.player, self.target)
         elif (self.command == "reload"):
@@ -106,4 +113,3 @@ class Parser(object):
             resultString = "I don't understand that."
             
         return resultString
-        

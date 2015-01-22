@@ -84,7 +84,13 @@ class Player(object):
         
     def attack(self, enemy):
         try:
-            return self.mainHand.attack(enemy, self)
+            return self.mainHand.attack(enemy, self, "light")
+        except AttributeError:
+            return "You are not holding a weapon."
+        
+    def heavyAttack(self, enemy):
+        try:
+            return self.mainHand.attack(enemy, self, "heavy")
         except AttributeError:
             return "You are not holding a weapon."
         

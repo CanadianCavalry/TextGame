@@ -83,3 +83,36 @@ class Rose108(NPCs.NPC):
         talkResponse = "She doesn't even look up. \"Yeah, sorry\", she says in a dead, toneless voice. \"I don't really want to talk to anyone right now. Please leave me alone.\""
         keywords = "rose,resident,occupant,woman,girl"
         super(Rose108, self).__init__(name, description, seenDescription, talkResponse, keywords)
+        
+class SecurityGuards109(NPCs.NPC):
+    
+    def __init__(self):
+        name = "Security Guards"
+        description = "Like all the rest of the security team recently hired by Father Malachi, the gear these two \
+are sporting definitely seems overkill for looking after a rehab centre. They're wearing a full suit of crimson body \
+armour and each carrying a rifle. They're starting to look very impatient with the young woman who's making such a fuss at the reception desk."
+        seenDescription = "There are two security guards standing at either end of the receptionist desk look irritated."
+        talkResponse = "One of them chuckles a little at the scene the young woman is causing. \"Sheesh!\" he says. \"She's like a little girl having a temper tantrum, huh?\""
+        keywords = "guard,guards,security guard,security guards,officers,security"
+        super(SecurityGuards102, self).__init__(name, description, seenDescription, talkResponse, keywords)
+        
+        self.addDialogue(NPCs.Dialogue("little girl,temper tantrum,girl,tantrum,temper,woman,irritated","Considering everything the House is doing for the people here, you think she'd show a little respect."))
+        self.addDialogue(NPCs.Dialogue("rejuvinax,drug","One of the security guards grins at the mention of this. \"Yes, Rejuvenax! The drug that will make everything better!\" (You try to explain that Rejuvenax isn’t helping you at all today, but he doesn’t seem to care or pay attention.)"))
+        self.addDialogue(NPCs.Dialogue("father malachi,malachi,father,boss","\"A great man! Who else could put you all you addicts and crazies on the straight and narrow as well as him?\""))
+        self.addDialogue(NPCs.Dialogue("management,new management,treatment","\"All of you residents seem to be complaining that we’re so hard on you. But we protect you at every turn and give you a perfect drug to cure all your ills. Tell me - did the previous managment do that for you?\""))
+        
+class Hayley109(NPCs.NPC):
+    
+    def __init__(self):
+        name = "Hayley"
+        description = "Seldom have you seen someone as angry and exasperated as this twenty-something woman. There \
+are tears in her eyes and her voice shakes with the fury as she angrily pounds the receptionist's desk with her fist. \
+\"You people are RIDICULOUS!\" she yells. \"My best friend\'s mother just DIED a couple days ago, and all I'm asking \
+you for is FIVE MINUTES TO TALK TO HER AND GIVE HER A HUG! I don't CARE if visiting hours are up! Can\'t you ignore the rules JUST THIS ONCE?!"
+        seenDescription = "A woman standing in front of the reception desk appears quite agitated, and is arguing with the two receptionists on duty. "
+        talkResponse = "\"Gleaning what you can from the conversation, you learn that the young woman just wants to visit one of residents - a \
+friend of hers who's mother died a few days ago - and the management won't allow this as the resident's visiting hours are up for the week. You can't help but \
+feel sympathy for her so you explain to the young woman that you're one of the residents of the house and that you might be able to help her out.\
+She stops yelling and looks at you, seemingly surprised that there's anyone else left in the universe who can see reason. \"What? You...you can help me?\""
+        keywords = "girl,woman,yelling girl,hayley,agitated girl"
+        super(Hayley109,self).__init__(name, description, seenDescription, talkResponse, keywords)

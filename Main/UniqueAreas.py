@@ -11,7 +11,19 @@ import UniqueNPCs
 class MainLobby109(AreasFeatures.Area):
     
     def __init__(self):
-        name = "Main Lobby"
-        description = "A floor of polished white marble. Beautiful water fountain near the door. Half a dozen chandeliers \
-set into the ceiling. You’ve always found this lobby quite pleasing to look at. However, currently the atmosphere is somewhat spoiled \
-by the woman standing in front of the reception desk, arguing loudly with the two receptionists on duty." 
+        self.name = "Main Lobby"
+        self.description = ["The lobby features an elegant water fountain near the entrance and a large reception desk in the middle of it. A woman standing \
+in front of the reception desk appears quite agitated, and is arguing with the two receptionists on duty. Two security guards \
+standing at either end of the receptionist desk look irritated with her. NORTH of you is the door to the Quarters area of the \
+Residential Wing. At the SOUTH end of the lobby is the exit that leads out to the rest of the city. Two security guards in front of it.",
+"The lobby features an elegant water fountain near the entrance and a large reception desk in the middle of it. Two security guards \
+stand at either end of the reception desk. NORTH of you is the door to the Quarters area of the \
+Residential Wing. At the SOUTH end of the lobby is the exit that leads out to the rest of the city. Two security guards are in front of it."]
+        self.visited = False
+        self.connectedAreas = {}
+        self.features = {}
+        self.itemsContained = {}
+        self.enemies = {}
+        self.NPCs = {}
+        self.roomState = 0
+

@@ -48,3 +48,14 @@ class ResidentsWingDoorsThirdFloor(AreasFeatures.Feature):
     
     def open(self, player):
         return "The door to this room is closed. The House's is really strict about the privacy of its residents and has a 'closed door, do not disturb policy'."
+    
+class mainLobby109ExteriorDoor(AreasFeatures.Feature):
+    
+    def __init__(self):
+        description = "A heavy pair of steel and glass security doors. The panes which cover most of each door are glazed, preventing your from seeing outside."
+        keywords = "door,doors,steel door,steel door,metal door,front door,south,south door"
+        AreasFeatures.Feature.__init__(self, description, keywords)
+        
+    def open(self, player):
+        return "One of the guards approaches you as you move towards the door.\"Heading out, Jacob? I'm pretty sure you've got a couple hours of visiting time left \
+for this week - just let me check your ID card and I'll make sure.\" You inform her that you might go out later, but you don't have time right now as you need to get to Father Malachi's talk."

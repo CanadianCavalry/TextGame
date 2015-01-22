@@ -19,6 +19,7 @@ class NPC(object):
         self.keywords = keywords
         self.dialogueTree = {}
         self.talkedTo = False
+        self.location = None
         
     def setTalkResponse(self, response):
         self.talkResponse = response
@@ -29,6 +30,15 @@ class NPC(object):
     def removeDialogue(self, dialogueToRemove):
         if dialogueToRemove.keywords in self.dialogueTree:
             del self.dialogueTree[dialogueToRemove.keywords]
+            
+    def clearDialogue(self):
+        self.dialogueTree = {}
+            
+    def addToLocation(self, location):
+        self.location = location
+        
+    def removeFromLocation(self):
+        self.location = None
             
     def talk(self):
         return self.talkResponse

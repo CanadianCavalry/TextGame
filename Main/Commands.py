@@ -173,6 +173,19 @@ def attack(player, keyword):
             return player.attack(matching[0])
         except AttributeError:
             return "I see no reason to attack that right now."
+        
+def heavyAttack(player, keyword):
+    matching = findMatching(player, keyword, list())
+            
+    if len(matching) == 0:
+        return "There is nothing like that here."
+    elif len(matching) > 1:
+        return "You need to be more specific"
+    elif len(matching) == 1:
+        try:
+            return player.heavyAttack(matching[0])
+        except AttributeError:
+            return "I see no reason to attack that right now."
 
 def shoot(player, keyword):
     matching = findMatching(player, keyword, list())

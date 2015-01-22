@@ -9,6 +9,7 @@ class Area(object):
         self.name = name
         self.description = description
         self.visited = False
+        self.roomState = 0
         self.connectedAreas = {}
         self.features = {}
         self.itemsContained = {}
@@ -17,7 +18,7 @@ class Area(object):
         
     def lookAt(self):
         desc = self.name
-        desc += "\n" + self.description
+        desc += "\n" + self.description[self.roomState]
         if self.itemsContained:
             desc += "\nItems you can see here:"
             for item in self.itemsContained.itervalues():    #Display all the visible items
@@ -68,9 +69,11 @@ class Area(object):
         
     def addNPC(self, NPCToAdd):
         self.NPCs[NPCToAdd.keywords] = NPCToAdd
+        NPCToAdd.addToLocation(self)
         
     def removeNPC(self, NPCToRemove):
         del self.NPCs[NPCToRemove.keywords]
+        NPCToRemove.removeFromLocation()
          
 
 class Feature(object):

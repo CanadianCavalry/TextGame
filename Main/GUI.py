@@ -86,8 +86,10 @@ class StatsPanel(object):
         self.condition = 'Unhurt'
         self.spirit = 'Saint Like'
         self.intoxication = 'Sober'
+        x = 640
+        y = 325
         width = 140
-        height = 190
+        height = 230
         pad = 2
         self.border = Rectangle(x - pad, y - pad, 
                                    x + width + pad, y + height + pad, [204, 0, 0, 255], batch)
@@ -103,7 +105,32 @@ class StatsPanel(object):
                                         batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10)
         ]
 
-    def updateStats(self, player):
+class EquipPanel(object):
+    def __init__(self, x, y, batch):
+        self.mainHand = "Empty"
+        self.offHand = "Empty"
+        self.armor = "None"
+        x = 640
+        y = 440
+        width = 140
+        height = 180
+        pad = 2
+        self.border = Rectangle(x - pad, y - pad, 
+                                   x + width + pad, y + height + pad, [204, 0, 0, 255], batch)
+        self.filler = Rectangle(x - pad + 5, y - pad + 5,
+                                   x + width + pad -5, y + height + pad - 5, [0, 0, 0, 255], batch)
+        
+        self.labels = [
+            pyglet.text.Label('Main Hand:\n' + self.mainHand, x=x+15, y=y+165, font_name='Times New Roman',font_size=16,
+                                        batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10),
+            pyglet.text.Label('Off Hand:\n' + self.offHand, x=x+15, y=y+105, font_name='Times New Roman',font_size=16,
+                                        batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10),
+            pyglet.text.Label('Armor:\n' + self.armor, x=x+15, y=y+40, font_name='Times New Roman',font_size=16,
+                                        batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10)
+        ]
+
+
+    def updateEquip(self, player):
         self.condition = player.getCondition()
         self.spirit = player.getSpirit()
         self.intoxication = player.getIntoxication()
@@ -159,7 +186,8 @@ class Window(pyglet.window.Window):
 
         self.set_focus(self.widgets[0])
         
-        self.statsDisplay = StatsPanel(640, 325, self.batch)
+        self.statsDisplay = StatsPanel(self.batch)
+        self.equipDisplay = EquipPanel(self.batch)
 
     def on_draw(self):
         #pyglet.gl.glClearColor(0.3, 0.3, 0.4, 1.0)
@@ -220,6 +248,7 @@ class Window(pyglet.window.Window):
             self.widgets[0].clearContents()
             
             self.statsDisplay.updateStats(self.state.player)
+            self.equipDisplay.updateEquip(self.state.player)
 
     def set_focus(self, focus):
         if self.focus:
