@@ -97,9 +97,9 @@ armour and each carrying a rifle. They're starting to look very impatient with t
         super(SecurityGuards102, self).__init__(name, description, seenDescription, talkResponse, keywords)
         
         self.addDialogue(NPCs.Dialogue("little girl,temper tantrum,girl,tantrum,temper,woman,irritated","Considering everything the House is doing for the people here, you think she'd show a little respect."))
-        self.addDialogue(NPCs.Dialogue("rejuvinax,drug","One of the security guards grins at the mention of this. \"Yes, Rejuvenax! The drug that will make everything better!\" (You try to explain that Rejuvenax isn’t helping you at all today, but he doesn’t seem to care or pay attention.)"))
+        self.addDialogue(NPCs.Dialogue("rejuvinax,drug","One of the security guards grins at the mention of this. \"Yes, Rejuvenax! The drug that will make everything better!\" You try to explain that Rejuvenax isn't helping you at all today, but he doesn't seem to care or pay attention."))
         self.addDialogue(NPCs.Dialogue("father malachi,malachi,father,boss","\"A great man! Who else could put you all you addicts and crazies on the straight and narrow as well as him?\""))
-        self.addDialogue(NPCs.Dialogue("management,new management,treatment","\"All of you residents seem to be complaining that we’re so hard on you. But we protect you at every turn and give you a perfect drug to cure all your ills. Tell me - did the previous managment do that for you?\""))
+        self.addDialogue(NPCs.Dialogue("management,new management,treatment","\"All of you residents seem to be complaining that we're so hard on you. But we protect you at every turn and give you a perfect drug to cure all your ills. Tell me - did the previous managment do that for you?\""))
         
 class Hayley109(NPCs.NPC):
     

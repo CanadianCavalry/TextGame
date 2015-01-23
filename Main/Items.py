@@ -217,7 +217,7 @@ class RangedWeapon(Weapon):
         
 class MeleeWeapon(Weapon):
 
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, critChance=10, stunLength):
+    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, critChance=10, stunLength=2):
         self.accuracy = accuracy
         self.stunLength = stunLength
         super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance)   

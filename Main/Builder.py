@@ -298,9 +298,8 @@ Residential Wing. At the SOUTH end of the lobby is the exit that leads out to th
     
     #Features
     mainLobby109.addFeature(AreasFeatures.Feature("The water fountain is beautifully crafted out of marble. In front of it is a pedestal that reads \"And be not drunk \
-with wine, wherein is excess, but be filled with the spirit. (Ephesians 5:18)\". You are dismayed to find that \
-\“Not even God can save you!\" is carved in big, ugly letters next to the verse from Ephesians. How strange and disgusting! Strange that you’ve never noticed this \
-vandalism before. You can’t imagine who would be stupid enough to do something like this in a room patrolled by security guards 24-7.", "fountain,water,water fountain,waterfountain"))
+with wine, wherein is excess, but be filled with the spirit. (Ephesians 5:18)\". You are dismayed to find that \"Not even God can save you!\" is carved in big, ugly letters next to the verse from Ephesians. How strange and disgusting! Strange that you've never noticed this \
+vandalism before. You can't imagine who would be stupid enough to do something like this in a room patrolled by security guards 24 7.", "fountain,water,water fountain,waterfountain"))
     mainLobby109.addFeature(AreasFeatures.Feature("A large, sermicircular, oak table. The two receptionists working behind it appear to be trying to calm down a very upset young woman.","reception desk,desk"))
     mainLobby109.addFeature(UniqueFeatures.mainLobby109ExteriorDoor())
     

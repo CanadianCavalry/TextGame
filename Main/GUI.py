@@ -231,6 +231,7 @@ class Window(pyglet.window.Window):
 
     def on_text_motion(self, motion):
         if self.focus:
+            
             self.focus.caret.on_text_motion(motion)
       
     def on_text_motion_select(self, motion):
@@ -248,7 +249,7 @@ class Window(pyglet.window.Window):
             self.widgets[0].clearContents()
             
             self.statsDisplay.updateStats(self.state.player)
-            self.equipDisplay.updateEquip(self.state.player)
+            #self.equipDisplay.updateEquip(self.state.player)
 
     def set_focus(self, focus):
         if self.focus:
