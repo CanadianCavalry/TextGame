@@ -20,9 +20,9 @@ class Area(object):
         desc = self.name
         desc += "\n" + self.description[self.roomState]
         if self.itemsContained:
-            desc += "\nItems you can see here:"
             for item in self.itemsContained.itervalues():    #Display all the visible items
-                desc += "\n" + item.seenDescription
+                if item.accessible:
+                    desc += "\n" + item.seenDescription
         if self.NPCs or self.enemies:
             desc += "\n"
         if self.NPCs:
@@ -84,6 +84,9 @@ class Feature(object):
         
     def lookAt(self):
         return self.description
+    
+    def get(self, holder, player):
+        return "That isn't something I can pick up."
     
 class Container(Feature):
     

@@ -8,14 +8,19 @@ import pyglet
 
 class Item(object):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords):
         self.name = name
         self.description = description
         self.seenDescription = seenDescription
         self.quantity = quantity
         self.keywords = keywords
+        self.accessible = True
+        self.inAccessibleDesc = None
         
     def get(self, holder, player):
+        if not self.accessible:
+            return self.inAccessibleDesc,True
+        
         player.addItem(self)
         holder.removeItem(self)
         return "You pick up the " + self.name + ".",True
@@ -27,15 +32,22 @@ class Item(object):
     
     def destroy(self, player):
         player.removeItem(self)
+        
+    def makeAccessible(self):
+        self.accessible = True
+        
+    def makeInAccessible(self, desc):
+        self.accessible = False
+        self.inAccessibleDesc = desc
     
     def lookAt(self):
         return self.description
 
 class Armor(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, armorRating):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, armorRating):
         self.armorRating = armorRating
-        super(Armor, self).__init__(name, description, seenDescription, quantity, keywords)
+        super(Armor, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
         
     def equip(self, player):
         if player.armor == self:
@@ -61,12 +73,12 @@ class Armor(Item):
     
 class Weapon(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, minDamage, maxDamage, size, critChance):
         self.minDamage = minDamage
         self.maxDamage = maxDamage
         self.critChance = critChance
         self.size = size
-        super(Weapon, self).__init__(name, description, seenDescription, quantity, keywords)
+        super(Weapon, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
         
     def equip(self, player):
         if player.mainHand == self:
@@ -134,13 +146,13 @@ class Weapon(Item):
         
 class RangedWeapon(Weapon):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining, fireSound, critChance=10):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, minDamage, maxDamage, size, accuracy, capacity, ammoRemaining, fireSound, critChance=10):
         self.accuracy = accuracy
         self.capacity = capacity
         self.ammoRemaining = ammoRemaining
         self.fireSound = fireSound
         self.rangeMod = [0,5,10]
-        super(RangedWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance)
+        super(RangedWeapon, self).__init__(name, description, seenDescription, initDesc, quantity, keywords, minDamage, maxDamage, size, critChance)
                             #Me name es Wayne Purkle coz when I nommin' grapes day be PURKLE!!!
     def attack(self, enemy, player, attackType):
         if attackType == "heavy":
@@ -217,10 +229,10 @@ class RangedWeapon(Weapon):
         
 class MeleeWeapon(Weapon):
 
-    def __init__(self, name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, accuracy, critChance=10, stunLength=2):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, minDamage, maxDamage, size, accuracy, critChance=10, stunLength=2):
         self.accuracy = accuracy
         self.stunLength = stunLength
-        super(MeleeWeapon, self).__init__(name, description, seenDescription, quantity, keywords, minDamage, maxDamage, size, critChance)   
+        super(MeleeWeapon, self).__init__(name, description, seenDescription, initDesc, quantity, keywords, minDamage, maxDamage, size, critChance)   
 
     def attack(self, enemy, player, attackType):
         resultString = "You swing your weapon."
@@ -260,26 +272,25 @@ class MeleeWeapon(Weapon):
 
 class Ammo(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, weaponType):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, weaponType):
         self.weaponType = weaponType
-        super(Ammo, self).__init__(name, description, seenDescription, quantity, keywords)
+        super(Ammo, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
     
 class Usable(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, useDescription):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, useDescription):
         self.useDescription = useDescription
-        super(Usable, self).__init__(name, description, seenDescription, quantity, keywords)
+        super(Usable, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
         
 class Drinkable(Usable):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords, useDescription):
-        super(Drinkable, self).__init__(name, description, seenDescription, quantity, keywords, useDescription)
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, useDescription):
+        super(Drinkable, self).__init__(name, description, seenDescription, initDesc, quantity, keywords, useDescription)
         
 class Readable(Item):
     
-    def __init__(self, name, description, seenDescription, quantity, keywords):
-        super(Readable, self).__init__(name, description, seenDescription, quantity, keywords)
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords):
+        super(Readable, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
             
     def read(self):
         pass
-        

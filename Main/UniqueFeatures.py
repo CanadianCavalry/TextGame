@@ -7,7 +7,7 @@ import AreasFeatures
 
 #Jacobs Room
 
-class JacobRoomWindow(AreasFeatures.Feature):
+class JacobRoomWindow101(AreasFeatures.Feature):
     
     def __init__(self):
         self.description = "A large sliding window. The people who designed these rooms know what they were doing. It lets in a lot of light when it's sunny out, and helps my mood."
@@ -16,7 +16,7 @@ class JacobRoomWindow(AreasFeatures.Feature):
     def open(self, player):
         return "Although it's easy to open, it has a fixed screen over it. "
     
-class ResidentsWingDoorsFirstFloor(AreasFeatures.Feature):
+class ResidentsWingDoorsFirstFloor102(AreasFeatures.Feature):
     
     def __init__(self):
         description = "All of the doors look pretty much identical. Thick wooden slabs painted a dull blue, with brass room numbers on their front. This door is closed."
@@ -27,7 +27,7 @@ class ResidentsWingDoorsFirstFloor(AreasFeatures.Feature):
     def open(self, player):
         return "The door to this room is closed. The House's is really strict about the privacy of its residents and has a 'closed door, do not disturb policy'."
 
-class ResidentsWingDoorsSecondFloor(AreasFeatures.Feature):
+class ResidentsWingDoorsSecondFloor104(AreasFeatures.Feature):
     
     def __init__(self):
         description = "All of the doors look pretty much identical. Thick wooden slabs painted a dull blue, with brass room numbers on their front. This door is closed."
@@ -38,7 +38,7 @@ class ResidentsWingDoorsSecondFloor(AreasFeatures.Feature):
     def open(self, player):
         return "The door to this room is closed. The House's is really strict about the privacy of its residents and has a 'closed door, do not disturb policy'."
 
-class ResidentsWingDoorsThirdFloor(AreasFeatures.Feature):
+class ResidentsWingDoorsThirdFloor107(AreasFeatures.Feature):
     
     def __init__(self):
         description = "All of the doors look pretty much identical. Thick wooden slabs painted a dull blue, with brass room numbers on their front. This door is closed."
@@ -49,7 +49,7 @@ class ResidentsWingDoorsThirdFloor(AreasFeatures.Feature):
     def open(self, player):
         return "The door to this room is closed. The House's is really strict about the privacy of its residents and has a 'closed door, do not disturb policy'."
     
-class mainLobby109ExteriorDoor(AreasFeatures.Feature):
+class mainLobbyExteriorDoor109(AreasFeatures.Feature):
     
     def __init__(self):
         description = "A heavy pair of steel and glass security doors. The panes which cover most of each door are glazed, preventing your from seeing outside."
@@ -59,3 +59,8 @@ class mainLobby109ExteriorDoor(AreasFeatures.Feature):
     def open(self, player):
         return "One of the guards approaches you as you move towards the door.\"Heading out, Jacob? I'm pretty sure you've got a couple hours of visiting time left \
 for this week - just let me check your ID card and I'll make sure.\" You inform her that you might go out later, but you don't have time right now as you need to get to Father Malachi's talk."
+
+class tortureTools109(AreasFeatures.Feature):
+    
+    def get(self, holder, player):
+        return "I can't quite reach it..."

@@ -15,25 +15,18 @@ import NPCs
 def buildCombatSimulator(gameState):
     
     #Combat Test Environment
-    armory = AreasFeatures.Area("Armory", ["This tiny, cramped room is lined on all sides by large steel cages packed with weapons of every kind. Sadly, they are all locked. On the small table in the center of the room is a small collection of items. There is a door to the north."])
+    armory = AreasFeatures.Area("Armory", ["This tiny, cramped room is lined on all sides by large steel cages packed with weapons of every kind. Sadly, they are all locked. On the metal table in the center of the room is a small collection of items. There is a door to the north."])
     arenaDoorA = StandardFeatures.StandardOpenDoor("A heavy steel door. It appears to have some sort of mechanism built into it that locks it once you pass through.", "north,north door,door,metal door,steel door")
     
     table = StandardFeatures.AlwaysOpenContainer("The table is littered with all manner of useless junk, although there are a few weapons on it. You also spy a metal sign attached to the side of it.", "table,small table")
     armory.addFeature(table)
-    sign = StandardFeatures.Sign("A shiny brass plaque that has been riveted to the table. It reads \"Please ensure you are prepared before continuing to the test arena. Good luck\"", "sign,metal sign", "Please ensure you are prepared before continuing to the test arena. Good luck")
-    armory.addFeature(sign)
-    
-    fireAxe = StandardItems.Axe()
-    chefKnife = StandardItems.Knife()
-    revolver = StandardItems.Revolver()
-    revolverAmmo = StandardItems.RevolverAmmo()
-    leatherJacket = StandardItems.LeatherJacket()
-    
-    table.addItem(fireAxe)
-    table.addItem(chefKnife)
-    table.addItem(revolver)
-    table.addItem(revolverAmmo)
-    table.addItem(leatherJacket)
+    armory.addFeature(StandardFeatures.Sign("A shiny brass plaque that has been riveted to the table. It reads \"Please ensure you are prepared before continuing to the test arena. Good luck\"", "sign,metal sign", "Please ensure you are prepared before continuing to the test arena. Good luck"))
+
+    table.addItem(StandardItems.Axe())
+    table.addItem(StandardItems.KitchenKnife())
+    table.addItem(StandardItems.Revolver())
+    table.addItem(StandardItems.RevolverAmmo())
+    table.addItem(StandardItems.LeatherJacket())
     
     combatRoom = AreasFeatures.Area("Arena", ["You are standing in a large, empty colosseum. There is a single, steel door to the south."])    
     arenaDoorB = StandardFeatures.StandardLockedDoor("A heavy steel door. It has no handle or lock that you can see.", "south,door,metal door,steel door", None)
@@ -47,9 +40,9 @@ def buildCombatSimulator(gameState):
     gameState.addArea(armory)
 
 def buildWorld(gameState):
-    buildQuarters100(gameState)
+    buildPrologue100(gameState)
     
-def buildQuarters100(gameState):
+def buildPrologue100(gameState):
     #JACOBS ROOM
     jacobsRoom101 = AreasFeatures.Area("Jacob's Room", ["This small room is well furnished with all of the comforts \
 you could ask for, including a bed, bookshelf, coffee table, dresser, tv and \
@@ -63,22 +56,14 @@ to the west leading to the residential wing."])
     #NPCs
     
     #Features
-    bookshelf101 = AreasFeatures.Feature("This tall, wooden bookshelf is filled with books on a variety of my favorite subjects - notably theology, history and literature. It also includes \na large red bible (NIV version)", "bookshelf,shelf")
-    jacobsRoom101.addFeature(bookshelf101)
-    painting101 = AreasFeatures.Feature("A beautiful painting by my brother, Fernando. It's of Jesus curing a blind man. The caption underneath reads 'Once I was blind, and now I see'. \nThe look of childlike surprise and utter gratitude on the mans face always fills me with hope.", "painting")
-    jacobsRoom101.addFeature(painting101)
-    bed101 = AreasFeatures.Feature("A very comfortable queen sized bed. I've been in the habit of making it immediately after waking since I was a very small child.", "bed,queen bed")
-    jacobsRoom101.addFeature(bed101)
-    dresser101 = AreasFeatures.Feature("Contains my clothes","dresser")
-    jacobsRoom101.addFeature(dresser101)
-    chairs101 = AreasFeatures.Feature("Two very comfortable armchairs. I often sit here while praying.","chair,chairs,armchair,armchairs")
-    jacobsRoom101.addFeature(chairs101)
-    bathroom101 = AreasFeatures.Feature("A small, personal bathroom complete with a sink, shower and toilet. Lately I've gotten into the habit of cleaning it on a weekly basis. \nIt often takes my mind off of my cravings.","bathroom,sink,toilet,shower")
-    jacobsRoom101.addFeature(bathroom101)
-    window101 = UniqueFeatures.JacobRoomWindow()
-    jacobsRoom101.addFeature(window101)
-    tv101 = AreasFeatures.Feature("This entertainment unit comes with a 42 inch LED, that includes cable and a PVR. On the bottom shelf are a variety of DVD's I've\n taken from The House library, as well as my personal collection of Dr. Who and Star Trek TNG box sets.","tv,entertinment stand,entertainment center")              #Add ability to turn on
-    jacobsRoom101.addFeature(tv101)
+    jacobsRoom101.addFeature(AreasFeatures.Feature("This tall, wooden bookshelf is filled with books on a variety of my favorite subjects - notably theology, history and literature. It also includes \na large red bible (NIV version)", "bookshelf,shelf"))
+    jacobsRoom101.addFeature(AreasFeatures.Feature("A beautiful painting by my brother, Fernando. It's of Jesus curing a blind man. The caption underneath reads 'Once I was blind, and now I see'. \nThe look of childlike surprise and utter gratitude on the mans face always fills me with hope.", "painting"))
+    jacobsRoom101.addFeature(AreasFeatures.Feature("A very comfortable queen sized bed. I've been in the habit of making it immediately after waking since I was a very small child.", "bed,queen bed"))
+    jacobsRoom101.addFeature(AreasFeatures.Feature("Contains my clothes","dresser"))
+    jacobsRoom101.addFeature(AreasFeatures.Feature("Two very comfortable armchairs. I often sit here while praying.","chair,chairs,armchair,armchairs"))
+    jacobsRoom101.addFeature(AreasFeatures.Feature("A small, personal bathroom complete with a sink, shower and toilet. Lately I've gotten into the habit of cleaning it on a weekly basis. \nIt often takes my mind off of my cravings.","bathroom,sink,toilet,shower"))
+    jacobsRoom101.addFeature(UniqueFeatures.JacobRoomWindow101())
+    jacobsRoom101.addFeature(AreasFeatures.Feature("This entertainment unit comes with a 42 inch LED, that includes cable and a PVR. On the bottom shelf are a variety of DVD's I've\n taken from The House library, as well as my personal collection of Dr. Who and Star Trek TNG box sets.","tv,entertinment stand,entertainment center"))              #Add ability to turn on)
     
     #Containers
     coffeeTable101 = StandardFeatures.AlwaysOpenContainer("A heavy wood coffee table, about 2 feet high. Oak, if I had to guess. Looks brand new. There are a dozen or so papers and notes scattered across the top of it. ", "coffee table,table")
@@ -87,20 +72,11 @@ to the west leading to the residential wing."])
     jacobsRoom101.addFeature(closet101)
     
     #Items
-    notice101 = StandardItems.Note("Notice on New Policies", "A note given to the residents about changes to the facilities policies since Father Malachi took over.", "A notice on house policy changes", 1, "note,policy note,notice,policy notice,changes notice,policy changes notice", "There be changes to the policy, bitches.")
-    coffeeTable101.addItem(notice101)
-    houseGuide101 = Items.Item("Guide to House Services", "To be filled", "A guide to house services", 1, "guide,house guide,services guide,house services guide")
-    coffeeTable101.addItem(houseGuide101)
-    rehabGuide101 = Items.Item("Guide to Combating Addiction", "To be filled", "A guide to addiction", 1, "guide,addiction guide")
-    coffeeTable101.addItem(rehabGuide101)
-    rejuvinaxNote101 = Items.Item("Rejuvinax Note", "To be filled", "A note about Rejuvinax", 1, "note,rejuvinax note,drug note")
-    coffeeTable101.addItem(rejuvinaxNote101)
-    journal101 = Items.Item("Journal", "To be filled", "My journal", 1, "journal")
-    coffeeTable101.addItem(journal101)
-    flaskOfScotch101 = StandardItems.Alchohol("Flask of Scotch", "A small silver flask which holds about 4 oz. I received this as a gift from a friend form church before they realized I had a problem. I'm sure they regretted giving it to me once they found out.", "A small silver flask of scotch.", 1, "flask,whiskey,scotch,silver flask,flask of scotch,alcohol,booze", "You unscrew the cap and drain the remaining liquid from the flask. Delicious.",10)
-    closet101.addItem(flaskOfScotch101)
-    leatherJacket101 = StandardItems.LeatherJacket()
-    closet101.addItem(leatherJacket101)
+    coffeeTable101.addItem(StandardItems.Note("Notice on New Policies", "A note given to the residents about changes to the facilities policies since Father Malachi took over.", "A notice on house policy changes is on the table.", "A notice on house policy changes is on the table.", 1, "note,policy note,notice,policy notice,changes notice,policy changes notice", "There be changes to the policy, bitches."))
+    coffeeTable101.addItem(Items.Item("Guide to House Services", "To be filled", "A guide to house services is on the table.", "A guide to house services is on the table.", 1, "guide,house guide,services guide,house services guide"))
+    coffeeTable101.addItem(Items.Item("Rejuvinax Note", "To be filled", "A note about Rejuvinax is on the table.", "A note about Rejuvinax is on the table.", 1, "note,rejuvinax note,drug note"))
+    closet101.addItem(StandardItems.Alchohol("Flask of Scotch", "A small silver flask which holds about 4 oz. I received this as a gift from a friend form church before they realized I had a problem. I'm sure they regretted giving it to me once they found out.", "There is a small silver flask on the floor.", "There is a small silver flask tucked into the corner of the closet.", 1, "flask,whiskey,scotch,silver flask,flask of scotch,alcohol,booze", "You unscrew the cap and drain the remaining liquid from the flask. Delicious.",10))
+    closet101.addItem(StandardItems.LeatherJacket())
     
     gameState.addArea(jacobsRoom101)
     
@@ -134,7 +110,7 @@ door to the NORTH leads into the Essential Services area of the Residents Wing."
     firstFloorHallway102.addNPC(UniqueNPCs.SecurityGuards102())
     
     #Features
-    firstFloorHallway102.addFeature(UniqueFeatures.ResidentsWingDoorsFirstFloor())
+    firstFloorHallway102.addFeature(UniqueFeatures.ResidentsWingDoorsFirstFloor102())
     
     #MAIN LOBBY
 
@@ -182,7 +158,7 @@ floor of the Residents wing can be accessed through this hallway."])
     #NPCs
     
     #Features
-    secondFloorHallway104.addFeature(UniqueFeatures.ResidentsWingDoorsSecondFloor())
+    secondFloorHallway104.addFeature(UniqueFeatures.ResidentsWingDoorsSecondFloor104())
     
     #Containers
     
@@ -249,7 +225,7 @@ her various trophies and awards are arranged; I always think of this as Astrid's
     #NPCs
     
     #Features
-    thirdFloorHallway107.addFeature(UniqueFeatures.ResidentsWingDoorsThirdFloor())
+    thirdFloorHallway107.addFeature(UniqueFeatures.ResidentsWingDoorsThirdFloor107())
     
     #Containers
     
@@ -301,8 +277,11 @@ Residential Wing. At the SOUTH end of the lobby is the exit that leads out to th
 with wine, wherein is excess, but be filled with the spirit. (Ephesians 5:18)\". You are dismayed to find that \"Not even God can save you!\" is carved in big, ugly letters next to the verse from Ephesians. How strange and disgusting! Strange that you've never noticed this \
 vandalism before. You can't imagine who would be stupid enough to do something like this in a room patrolled by security guards 24 7.", "fountain,water,water fountain,waterfountain"))
     mainLobby109.addFeature(AreasFeatures.Feature("A large, sermicircular, oak table. The two receptionists working behind it appear to be trying to calm down a very upset young woman.","reception desk,desk"))
-    mainLobby109.addFeature(UniqueFeatures.mainLobby109ExteriorDoor())
+    mainLobby109.addFeature(UniqueFeatures.mainLobbyExteriorDoor109())
     
     #Containers
     
     #Items
+    
+def buildAreaOne200():
+    pass

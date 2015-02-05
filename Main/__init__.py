@@ -10,13 +10,13 @@ class Player(object):
         self.health = 100
         self.spirit = 100
         self.intoxication = 0
+        self.isDefending = False
         self.mainHand = None
         self.offHand = None
         self.dodgeChance = 0
         self.armor = None
         self.armorRating = 0
-        self.isDefending = False
-
+        
     def increaseSpirit(self, amount):
         self.spirit += amount
         if self.spirit > 100:
@@ -48,8 +48,8 @@ class Player(object):
         if self.intoxication < 0:
             self.intoxication = 0
         
-    def setDodgeChance(self, dodgeChance):
-        self.dodgeChance = dodgeChance
+    def restrictPlayer(self):
+        self.isRestricted = True
         
     def addItem(self, itemToAdd):
         for item in self.inventory:
