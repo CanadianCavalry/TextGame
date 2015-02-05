@@ -55,21 +55,6 @@ class Armor(Item):
         
         player.armor = self
         return "You equip the " + self.name + ".",True
-
-        
-#This is the older equip command which uses raw_input - Not compatible with the current GUI
-#     def equip(self, player):
-#         if player.armor:
-#             query = "Unequip your " + player.armor.name + " and equip the " + self.name
-#             selection = raw_input(query)
-#             if (selection == "y") or (selection == "yes"):
-#                 player.armor = self
-#                 return "You equip the " + self.name + ".",True
-#             else:
-#                 return "Ok then."
-#         else:
-#             player.armor = self
-#             return "You equip the " + self.name + ".",True
     
 class Weapon(Item):
     
@@ -92,55 +77,7 @@ class Weapon(Item):
             player.mainHand = self
             player.offHand = self
             return "You equip the " + self.name,True
-        
-#This is the older equip command which uses raw_input - Not compatible with the current GUI
-#     def equip(self, player):
-#         if player.mainHand == self:
-#             return "That is already equipped."
-#         if self.size == 1:
-#             if player.mainHand:
-#                 return self.changeEquip(player)
-#             else:
-#                 player.mainHand = self
-#                 return "You equip the " + self.name,True
-#         else:
-#             if player.mainHand or player.offHand:
-#                 return self.changeEquip(player)
-#             else:
-#                 player.mainHand = self
-#                 player.offHand = self
-#                 return "You equip the " + self.name,True
-#                 
-#
-#     def changeEquip(self, player):
-#         if self.size == 1:
-#             query = "You are already holding something in your main hand. Unequip the " + player.mainHand.name + " and equip the " + self.name + "?\n"
-#             selection = raw_input(query).lower()
-#             if (selection == "y") or (selection == "yes"):
-#                 if player.mainHand == player.offHand:
-#                     player.offHand = None
-#                 player.mainHand = self
-#                 return "You equip the " + self.name,True
-#             else:
-#                 return "Ok then."
-#         else:
-#             query = "You need to have two free hands to equip that. Unequip the"
-#             if player.mainHand:
-#                 query += " " + player.mainHand.name
-#                 if (player.offHand) and (player.mainHand != player.offHand):
-#                     query += " and the"
-#             if (player.offHand) and (player.offHand != player.mainHand):
-#                 query += " " + player.offHand.name
-#             query += ", and equip the " + self.name + "?\n"
-#             
-#             selection = raw_input(query).lower()
-#             if (selection == "y") or (selection == "yes"):
-#                 player.mainHand = self
-#                 player.offHand = self
-#                 return "You equip the " + self.name,True
-#             else:
-#                 return "Ok then."         
-        
+
     def attack(self):
         pass
         

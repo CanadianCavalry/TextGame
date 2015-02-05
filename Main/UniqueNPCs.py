@@ -94,7 +94,7 @@ armour and each carrying a rifle. They're starting to look very impatient with t
         seenDescription = "There are two security guards standing at either end of the receptionist desk look irritated."
         talkResponse = "One of them chuckles a little at the scene the young woman is causing. \"Sheesh!\" he says. \"She's like a little girl having a temper tantrum, huh?\""
         keywords = "guard,guards,security guard,security guards,officers,security"
-        super(SecurityGuards102, self).__init__(name, description, seenDescription, talkResponse, keywords)
+        super(SecurityGuards109, self).__init__(name, description, seenDescription, talkResponse, keywords)
         
         self.addDialogue(NPCs.Dialogue("little girl,temper tantrum,girl,tantrum,temper,woman,irritated","Considering everything the House is doing for the people here, you think she'd show a little respect."))
         self.addDialogue(NPCs.Dialogue("rejuvinax,drug","One of the security guards grins at the mention of this. \"Yes, Rejuvenax! The drug that will make everything better!\" You try to explain that Rejuvenax isn't helping you at all today, but he doesn't seem to care or pay attention."))

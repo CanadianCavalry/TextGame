@@ -5,12 +5,15 @@ Created on Jun 30, 2014
 '''
 import AreasFeatures
 import StandardFeatures
+import UniqueAreas
 import UniqueFeatures
-import StandardItems
 import Items
+import StandardItems
+import UniqueItems
 import Enemies
-import UniqueNPCs
+import UniqueEnemies
 import NPCs
+import UniqueNPCs
 
 def buildCombatSimulator(gameState):
     
@@ -41,6 +44,7 @@ def buildCombatSimulator(gameState):
 
 def buildWorld(gameState):
     buildPrologue100(gameState)
+    buildAreaOne200()
     
 def buildPrologue100(gameState):
     #JACOBS ROOM
@@ -266,11 +270,11 @@ Residential Wing. At the SOUTH end of the lobby is the exit that leads out to th
     mainLobby109.connect(firstFloorHallway102, door109A)
     firstFloorHallway102.connect(mainLobby109, door102C)
     
-    door109B = StandardFeatures.StandardLockedDoor()
+    #Need to add door to outside
     
     #NPCs
-    mainLobby109.addNPC(UniqueNPCs.SecurityGuards109)
-    mainLobby109.addNPC(UniqueNPCs.Hayley109)
+    mainLobby109.addNPC(UniqueNPCs.SecurityGuards109())
+    mainLobby109.addNPC(UniqueNPCs.Hayley109())
     
     #Features
     mainLobby109.addFeature(AreasFeatures.Feature("The water fountain is beautifully crafted out of marble. In front of it is a pedestal that reads \"And be not drunk \
@@ -284,4 +288,4 @@ vandalism before. You can't imagine who would be stupid enough to do something l
     #Items
     
 def buildAreaOne200():
-    pass
+    jacobsRoom201 = UniqueAreas.interrogationRoom201()

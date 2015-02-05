@@ -202,6 +202,15 @@ class Player(object):
             intoxicationString += "Near Lethal"
             
         return intoxicationString
+    
+    def getMainHand(self):
+        return self.mainHand
+    
+    def getOffHand(self):
+        return self.offHand
+    
+    def getArmor(self):
+        return self.armor
 
     def calcDodgeChance(self):
         return self.dodgeChance
