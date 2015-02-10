@@ -44,7 +44,7 @@ def buildCombatSimulator(gameState):
 
 def buildWorld(gameState):
     buildPrologue100(gameState)
-    buildAreaOne200()
+    buildAreaOne200(gameState)
     
 def buildPrologue100(gameState):
     #JACOBS ROOM
@@ -82,7 +82,7 @@ to the west leading to the residential wing."])
     closet101.addItem(StandardItems.Alchohol("Flask of Scotch", "A small silver flask which holds about 4 oz. I received this as a gift from a friend form church before they realized I had a problem. I'm sure they regretted giving it to me once they found out.", "There is a small silver flask on the floor.", "There is a small silver flask tucked into the corner of the closet.", 1, "flask,whiskey,scotch,silver flask,flask of scotch,alcohol,booze", "You unscrew the cap and drain the remaining liquid from the flask. Delicious.",10))
     closet101.addItem(StandardItems.LeatherJacket())
     
-    gameState.addArea(jacobsRoom101)
+    #gameState.addArea(jacobsRoom101)
     
     #FIRST FLOOR HALLWAY
     firstFloorHallway102 = AreasFeatures.Area("First Floor Hallway", 
@@ -287,5 +287,6 @@ vandalism before. You can't imagine who would be stupid enough to do something l
     
     #Items
     
-def buildAreaOne200():
+def buildAreaOne200(gameState):
     jacobsRoom201 = UniqueAreas.interrogationRoom201()
+    gameState.addArea(jacobsRoom201)

@@ -13,10 +13,10 @@ class Axe(Items.MeleeWeapon):
         super(Axe, self).__init__("Axe", "A long handled fire axe, intended for emergency use. The current situation probably qualifies.",
                                    "A fire axe is lying on the floor.", "A fire axe is lying on the floor.", 1, "axe,fire axe,weapon", 11, 15, 2, 75)
         
-class Scalpal201(Items.MeleeWeapon):
+class Scalpel(Items.MeleeWeapon):
     
     def __init__(self):
-        super(Scalpal201, self).__init__("Scalpal201", "A common surgical tool. Sharp and lightweight, but its small size and tiny reach make it a poor weapon.", 
+        super(Scalpel, self).__init__("Scalpel201", "A common surgical tool. Sharp and lightweight, but its small size and tiny reach make it a poor weapon.", 
                                       "A scalpal is lying on the ground.", "A scalpal is lying on the ground.", 1, "scalpal", 5, 11, 1, 60, 15, 0)
         
 class KitchenKnife(Items.MeleeWeapon):

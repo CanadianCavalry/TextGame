@@ -16,6 +16,9 @@ class Player(object):
         self.dodgeChance = 0
         self.armor = None
         self.armorRating = 0
+        self.isRestricted = False
+        self.restrictedDesc = ""
+        self.lastAction = None
         
     def increaseSpirit(self, amount):
         self.spirit += amount
@@ -48,8 +51,12 @@ class Player(object):
         if self.intoxication < 0:
             self.intoxication = 0
         
-    def restrictPlayer(self):
+    def restrictPlayer(self, desc):
         self.isRestricted = True
+        self.restrictedDesc = desc
+        
+    def unrestrictPlayer(self):
+        self.isRestricted = False
         
     def addItem(self, itemToAdd):
         for item in self.inventory:
@@ -62,7 +69,7 @@ class Player(object):
         self.inventory[itemToAdd.keywords] = itemToAdd
         return
         
-    def removeItem(self, itemToRemove):
+    def removeItem(self, itemToRemove):        
         if self.mainHand == itemToRemove:
             self.mainHand = None
         if self.offHand == itemToRemove:
@@ -83,24 +90,36 @@ class Player(object):
         return
         
     def attack(self, enemy):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         try:
             return self.mainHand.attack(enemy, self, "light")
         except AttributeError:
             return "You are not holding a weapon."
         
     def heavyAttack(self, enemy):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         try:
             return self.mainHand.attack(enemy, self, "heavy")
         except AttributeError:
             return "You are not holding a weapon."
         
     def shoot(self, enemy):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         try:
             return self.mainHand.shoot(enemy, self)
         except AttributeError:
             return "You are not holding a gun."
         
     def reload(self):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         if self.mainHand:
             try:
                 return self.mainHand.reload(self)
@@ -110,6 +129,9 @@ class Player(object):
             return "You are not holding anything."
         
     def defend(self):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         self.isDefending = True
         return "You take a defensive stance.", True
         
@@ -120,22 +142,10 @@ class Player(object):
             return "An error occurred during exorcism."
         
     def advance(self, enemy):
-        if enemy.distanceToPlayer > 1:
-            enemy.distanceToPlayer -= 1
-            resultString = "You move towards the" + enemy.name, True
-        else:
-            resultString = "You are already right in front of the enemy."
-            
-        return resultString
+        return enemy.playerAdvances()
     
     def retreat(self, enemy):
-        if enemy.distanceToPlayer < 3:
-            enemy.distanceToPlayer += 1
-            resultString = "You move away from the" + enemy.name, True
-        else:
-            resultString = "You are already as far away as you can get."
-            
-        return resultString
+        return enemy.playerRetreats()
         
     def wait(self):
         return "You wait.", True
@@ -154,6 +164,8 @@ class Player(object):
             healthString += "Grievously Wounded"
         elif self.health >= 1:
             healthString += "Dying"
+        elif self.health < 1:
+            healthString += "Dead"
         
         return healthString    
 
@@ -241,6 +253,9 @@ class Player(object):
                     continue
                 else:
                     enemyList.append(enemy)
+        
+    def setLastAction(self, actionName):
+        self.lastAction = actionName
         
 def launch():
     window = GUI.Window(Player())      #start the GUI

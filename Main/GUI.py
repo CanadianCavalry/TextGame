@@ -97,9 +97,9 @@ class StatsPanel(object):
                                    x + width + pad -5, y + height + pad - 5, [0, 0, 0, 255], batch)
         
         self.labels = [
-            pyglet.text.Label('Condition:\n' + self.condition, x=x+15, y=y+165, font_name='Times New Roman',font_size=16,
+            pyglet.text.Label('Condition:\n' + self.condition, x=x+15, y=y+175, font_name='Times New Roman',font_size=16,
                                         batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10),
-            pyglet.text.Label('Spirit:\n' + self.spirit, x=x+15, y=y+105, font_name='Times New Roman',font_size=16,
+            pyglet.text.Label('Spirit:\n' + self.spirit, x=x+15, y=y+100, font_name='Times New Roman',font_size=16,
                                         batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10),
             pyglet.text.Label('Intoxication:\n' + self.intoxication, x=x+15, y=y+40, font_name='Times New Roman',font_size=16,
                                         batch=batch, color=(155,0,0,255), bold=True, multiline=True, width = width - 10)
@@ -297,19 +297,36 @@ class Window(pyglet.window.Window):
         except ValueError:
             resultString = turnResult
             turnPassed = False
+            
+        gameOver = self.checkGameOver()
+        if gameOver:
+            resultString += gameOver
+            self.updateTextBox(resultString)
+            return
         
         if turnPassed:
             if (self.parser.command == "go") and (actingEnemies):
                 resultString = "You turn to run...\n" + Enemies.enemyAction(self.state.player, actingEnemies) + "\n" + resultString
             else:
-                resultString += "\n" + Enemies.enemyAction(self.state.player, actingEnemies)
+                resultString += "\n\n" + Enemies.enemyAction(self.state.player, actingEnemies)
             self.state.player.beginTurn()
             
-            if self.state.player.health < 1:
-                resultString += "\nYou have died...\nPress enter to return to the main menu."
+            gameOver = self.checkGameOver()
+            if gameOver:
+                resultString += gameOver
+                self.updateTextBox(resultString)
+                return
                 
             if pursuingEnemies:
                 Enemies.enemyMovement(pursuingEnemies, enemyDestination)
             
-        self.disp.document.text = resultString
+        self.updateTextBox(resultString)
+        
+    def updateTextBox(self, text):
+        self.disp.document.text = text
+        
+    def checkGameOver(self):
+        if self.state.player.health < 1:
+            return "\nYou have died...\nPress enter to return to the main menu."
+        return False
         

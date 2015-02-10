@@ -162,6 +162,9 @@ class Link(object):
         if self.isAccessible == False:
             return self.blockedDesc
         
+        if player.isRestricted:
+            return player.restrictedDesc
+        
         desc = self.travelDesc + "\n\n"
         player.currentLocation = self.destination
         if player.currentLocation.visited == False:

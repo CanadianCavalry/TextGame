@@ -4,8 +4,6 @@ Created on Aug 3, 2014
 @author: Thomas
 '''
 from random import randint
-import Items
-import StandardItems
 
 def getActingEnemies(player):
     return player.currentLocation.enemies
@@ -43,14 +41,18 @@ class Enemy(object):
         self.dodgeChance = dodgeChance
         self.armor = armor
         self.health = maxHealth
+        self.enemyState = 0
         self.baseExorciseChance = 5
         self.distanceToPlayer = 3
         self.currentLocation = None
         self.actionTimer = 1
         self.stunnedTimer = 0
         self.isChasing = False
+        self.stunDesc = ""
         self.exorciseDialogue = ["\"Back to hell with you demon!\"", "\"In the name of god, DIE!\"", "\"With the lord as my weapon, I will destroy you!\""]
-        self.critDialogue = "You charge forward and knock the creature to the gorund. As it struggles to rise, you finish it off with a single strike."
+        self.critDialogue = "You charge forward and knock the creature to the ground. As it struggles to rise, you finish it off with a single strike."
+        self.advanceDialogue = "The " + self.name + " moves towards you.\n" + self.getDistance()
+        self.retreatDialogue = "The " + self.name + " moves away from you.\n" + self.getDistance()
         
     def travel(self, location):
         for link in self.currentLocation.connectedAreas.itervalues():
@@ -107,18 +109,33 @@ class Enemy(object):
     def advance(self):
         if self.distanceToPlayer > 1:
             self.distanceToPlayer -= 1
-            return "The " + self.name + " moves towards you.\n" + self.getDistance()
+            return self.advanceDialogue
         return "The " + self.name + " does nothing."
     
     def retreat(self):
         if self.distanceToPlayer < 3:
             self.distanceToPlayer += 1
-            return "The " + self.name + " moves away from you.\n" + self.getDistance()
+            return self.retreatDialogue
         return "The " + self.name + " does nothing."
     
-    def takeStun(self, stunTime):
-        if self.stunnedTimer > 0:
+    def playerAdvances(self):
+        if self.distanceToPlayer <= 1:
+            return "You are already right in front of it!"
+        else:
+            self.distanceToPlayer -= 1
+            return "You advance on the " + self.name, True
+        
+    def playerRetreats(self):
+        if self.distanceToPlayer >= 3:
+            return "Your back is to the wall."
+        else:
+            self.distanceToPlayer -= 1
+            return "You retreat from the " + self.name, True
+    
+    def makeStunned(self, stunTime, stunDesc):
+        if self.stunnedTimer == 0:
             self.stunnedTimer = stunTime
+            self.stunDesc = stunDesc
         
     def takeHit(self, weapon, attackType):
         damageAmount = (randint(weapon.minDamage, weapon.maxDamage))
@@ -129,7 +146,7 @@ class Enemy(object):
             if critRoll <= weapon.critChance:
                 resultString = self.takeCrit(weapon)
             else:
-                self.takeStun(weapon.stunLength)
+                self.makeStunned(weapon.stunLength)
         else:
             resultString = "You hit the " + self.name + "!"
             resultString += self.takeDamage(damageAmount)
@@ -168,9 +185,33 @@ class Enemy(object):
     def kill(self):
         self.currentLocation.killEnemy(self)
         return "The " + self.name + " falls to the ground dead."
+    
+    def setState(self, newState):
+        self.enemyState = newState
+    
+    def setDistance(self, newDistance):
+        if newDistance >= 3:
+            self.distanceToPlayer = 3
+        else:
+            self.distanceToPlayer = newDistance
         
     def setLocation(self, location):
         self.currentLocation = location
+        
+    def setExorciseDialogue(self, textList):
+        self.exorciseDialogue = textList
+        
+    def addExorciseDialogue(self, text):
+        self.exorciseDialogue.append(text)
+    
+    def removeExorciseDialogue(self, index):
+        del self.exorciseDialogue[index]
+        
+    def setAdvanceDialogue(self, text):
+        self.advanceDialogue = text
+        
+    def setRetreatDialogue(self, text):
+        self.retreatDialogue = text
     
     def getCondition(self):
         if self.health == self.maxHealth:

@@ -4,6 +4,7 @@ Created on Jul 5, 2014
 @author: Thomas
 '''
 import AreasFeatures
+import StandardFeatures
 
 #Jacobs Room
 
@@ -59,4 +60,3 @@ class mainLobbyExteriorDoor109(AreasFeatures.Feature):
     def open(self, player):
         return "One of the guards approaches you as you move towards the door.\"Heading out, Jacob? I'm pretty sure you've got a couple hours of visiting time left \
 for this week - just let me check your ID card and I'll make sure.\" You inform her that you might go out later, but you don't have time right now as you need to get to Father Malachi's talk."
-    

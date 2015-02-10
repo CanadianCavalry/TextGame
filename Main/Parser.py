@@ -25,6 +25,7 @@ class Parser(object):
         return
         
     def parse(self, inputString):
+        self.state.player.setLastAction(None)
         inputString = inputString.lower()
         inputArray = inputString.split()                 #Break apart their input into the action and the target(or object)
         
@@ -111,5 +112,7 @@ class Parser(object):
             resultString = StateControl.quit()
         else:
             resultString = "I don't understand that."
+            
+        self.state.player.setLastAction(self.command)
             
         return resultString
