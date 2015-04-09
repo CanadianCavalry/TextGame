@@ -115,7 +115,7 @@ def useOn(player, targetKeyword, recipientKeyword):
         recipient = matching[0]
             
     try:
-        return target.useOn(player, recipient)
+        return target.useOn(recipient)
     except AttributeError:
         return "You cannot use that in that way."
 
@@ -329,7 +329,7 @@ def talk(player, keyword):
         return "You do not see anyone like that here."
     elif len(matching) == 1:
         try:
-            return matching[0].talk(player)
+            return matching[0].talk()
         except AttributeError:
             return "I don't think it's very likely to respond."
     

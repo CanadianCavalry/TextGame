@@ -16,7 +16,7 @@ class Axe(Items.MeleeWeapon):
 class Scalpel(Items.MeleeWeapon):
     
     def __init__(self):
-        super(Scalpel, self).__init__("Scalpel", "A common surgical tool. Sharp and lightweight, but its small size and tiny reach make it a poor weapon.", 
+        super(Scalpel, self).__init__("Scalpel201", "A common surgical tool. Sharp and lightweight, but its small size and tiny reach make it a poor weapon.", 
                                       "A scalpal is lying on the ground.", "A scalpal is lying on the ground.", 1, "scalpal", 5, 11, 1, 60, 15, 0)
         
 class KitchenKnife(Items.MeleeWeapon):
@@ -49,9 +49,9 @@ class LeatherJacket(Items.Armor):
 #Consumables
 class Alchohol(Items.Drinkable):
     
-    def __init__(self, name, description, seenDesc, initDesc, quantity, keywords, useDescription, alcoholAmount):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, useDescription, alcoholAmount):
         self.alcoholAmount = alcoholAmount
-        super(Alchohol, self).__init__(name, description, seenDesc, initDesc, quantity, keywords, useDescription)
+        super(Alchohol, self).__init__(name, description, seenDescription, initDesc, quantity, keywords, useDescription)
         
     def drink(self, player):
         player.increaseIntox(self.alcoholAmount)
@@ -68,26 +68,26 @@ class Key(Items.Usable):
     def use(self):
         return "Use the key on what?"
     
-    def useOn(self, player, recipient):
+    def useOn(self, recipient):
         if (isinstance(recipient, AreasFeatures.Door)) or (isinstance(recipient, AreasFeatures.Container)):
             return recipient.unlock(self)
         else:
-            return "It doesn't have a lock to put the key in..."
+            return "You cannot use the key on that."
         
 class Note(Items.Readable):
     
-    def __init__(self, name, description, seenDesc, initDesc, quantity, keywords, contents):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords, contents):
         self.contents = contents
-        super(Note, self).__init__(name, description, seenDesc, initDesc, quantity, keywords)
+        super(Note, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
     
     def read(self):
         return self.contents,True
     
 class Book(Items.Readable):
     
-    def __init__(self, name, description, seenDesc, initDesc, quantity, keywords):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords):
         self.pages = []
-        super(Book, self).__init__(name, description, seenDesc, initDesc, quantity, keywords)
+        super(Book, self).__init__(name, description, seenDescription, initDesc, quantity, keywords)
         
     def read(self):
         for page in self.pages:

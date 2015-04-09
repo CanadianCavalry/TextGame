@@ -11,11 +11,10 @@ class Dialogue(object):
 
 class NPC(object):
     
-    def __init__(self, name, description, seenDesc, talkResponse, keywords, idNum=0):
+    def __init__(self, name, description, seenDescription, talkResponse, keywords):
         self.name = name
         self.description = description
-        idNum = idNum
-        self.seenDescription = seenDesc
+        self.seenDescription = seenDescription
         self.talkResponse = talkResponse
         self.keywords = keywords
         self.dialogueTree = {}
@@ -41,7 +40,7 @@ class NPC(object):
     def removeFromLocation(self):
         self.location = None
             
-    def talk(self, player):
+    def talk(self):
         return self.talkResponse
     
     def ask(self, keyword):
@@ -57,9 +56,6 @@ class NPC(object):
             return "You'll need to be more specific.", True
         else:
             return matching[0].response, True
-                    
-    def setIdNum(self, number):
-        self.idNum = number
                     
     def lookAt(self):
         return self.description

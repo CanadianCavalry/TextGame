@@ -8,60 +8,37 @@ import pyglet
 
 class Item(object):
     
-    def __init__(self, name, description, seenDesc, initDesc, quantity, keywords, idNum=0):
+    def __init__(self, name, description, seenDescription, initDesc, quantity, keywords):
         self.name = name
         self.description = description
-        idNum = idNum
-        self.seenDescription = seenDesc
-        self.initDesc = initDesc
-        self.pickupDesc = "You pick up the " + name + "."
-        self.initPickupDesc = None
+        self.seenDescription = seenDescription
         self.quantity = quantity
         self.keywords = keywords
         self.accessible = True
-        self.inaccessibleDesc = None
-        self.firstPickup = True
+        self.inAccessibleDesc = None
         
     def get(self, holder, player):
         if not self.accessible:
-            return self.inaccessibleDesc,True
+            return self.inAccessibleDesc,True
         
         player.addItem(self)
         holder.removeItem(self)
-        if (player.mainHand == None) and (isinstance(self, Weapon)):
-            self.equip(player)
-            
-        if self.firstPickup and self.initPickupDesc:
-            resultString = self.initPickupDesc
-        else:
-            resultString = self.pickupDesc
-        
-        self.firstPickup = False
-        return resultString, True
+        return "You pick up the " + self.name + ".",True
     
     def drop(self, player):
         player.removeItem(self)
         player.currentLocation.addItem(self)
         return "You drop the " + self.name,True
     
-    def destroy(self, holder):
-        holder.removeItem(self)
+    def destroy(self, player):
+        player.removeItem(self)
         
     def makeAccessible(self):
         self.accessible = True
         
     def makeInAccessible(self, desc):
         self.accessible = False
-        self.inaccessibleDesc = desc
-        
-    def setPickupDesc(self, desc):
-        self.pickupDesc = desc
-        
-    def setInitPickupDesc(self,desc):
-        self.initPickupDesc = desc
-    
-    def setIdNum(self, number):
-        self.idNum = number
+        self.inAccessibleDesc = desc
     
     def lookAt(self):
         return self.description

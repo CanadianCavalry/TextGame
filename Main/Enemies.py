@@ -28,11 +28,10 @@ def enemyMovement(movingEnemies, enemyDestination):
 
 class Enemy(object):
     
-    def __init__(self, name, description, seenDesc, keywords, maxHealth, minDamage, maxDamage, accuracy, speed, dodgeChance, armor, idNum=0):
+    def __init__(self, name, description, seenDescription, keywords, maxHealth, minDamage, maxDamage, accuracy, speed, dodgeChance, armor):
         self.name = name
         self.description = description
-        idNum = idNum
-        self.seenDescription = seenDesc
+        self.seenDescription = seenDescription
         self.keywords = keywords
         self.maxHealth = maxHealth
         self.minDamage = minDamage
@@ -49,10 +48,8 @@ class Enemy(object):
         self.actionTimer = 1
         self.stunnedTimer = 0
         self.isChasing = False
-        self.talkCount = 0
         self.stunDesc = ""
         self.exorciseDialogue = ["\"Back to hell with you demon!\"", "\"In the name of god, DIE!\"", "\"With the lord as my weapon, I will destroy you!\""]
-        self.talkDialogue = ["It doesn't respond."]
         self.critDialogue = "You charge forward and knock the creature to the ground. As it struggles to rise, you finish it off with a single strike."
         self.advanceDialogue = "The " + self.name + " moves towards you.\n" + self.getDistance()
         self.retreatDialogue = "The " + self.name + " moves away from you.\n" + self.getDistance()
@@ -189,12 +186,6 @@ class Enemy(object):
         self.currentLocation.killEnemy(self)
         return "The " + self.name + " falls to the ground dead."
     
-    def talk(self):
-        resultString = self.talkDialogue[self.talkCount]
-        if self.talkCount < len(self.talkDialogue) - 1:
-            self.talkCount += 1
-        return resultString, True
-            
     def setState(self, newState):
         self.enemyState = newState
     
@@ -212,13 +203,6 @@ class Enemy(object):
         
     def addExorciseDialogue(self, text):
         self.exorciseDialogue.append(text)
-    
-    def setTalkDialogue(self, textList):
-        self.talkDialogue = textList
-        
-    def addTalkDialogue(self, text):
-        self.talkDialogue.append(text)
-    
     
     def removeExorciseDialogue(self, index):
         del self.exorciseDialogue[index]
@@ -256,16 +240,13 @@ class Enemy(object):
         lookResult += "\n" + self.getCondition()
         lookResult += "\n" + self.getDistance()
         return lookResult
-    
-    def setIdNum(self, number):
-        self.idNum = number
 
 class TestDemon(Enemy):
     
     def __init__(self):
         name = "Test Demon"
         description = "A slavering, red skinned, bat winged demon. Pretty standard stuff actually."
-        seenDesc = "You see a Winged Demon glaring at you menacingly."
+        seenDescription = "You see a Winged Demon glaring at you menacingly."
         keywords = "demon,red demon,winged demon"
         maxHealth = 125
         minDamage = 15
@@ -274,4 +255,4 @@ class TestDemon(Enemy):
         speed = 1
         dodgeChance = 5
         armor = 0
-        super(TestDemon, self).__init__(name, description, seenDesc, keywords, maxHealth, minDamage, maxDamage, accuracy, speed, dodgeChance, armor)
+        super(TestDemon, self).__init__(name, description, seenDescription, keywords, maxHealth, minDamage, maxDamage, accuracy, speed, dodgeChance, armor)
