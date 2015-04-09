@@ -50,13 +50,49 @@ class ResidentsWingDoorsThirdFloor107(AreasFeatures.Feature):
     def open(self, player):
         return "The door to this room is closed. The House's is really strict about the privacy of its residents and has a 'closed door, do not disturb policy'."
     
-class mainLobbyExteriorDoor109(AreasFeatures.Feature):
+class MainLobbyExteriorDoor109(AreasFeatures.Feature):
     
     def __init__(self):
         description = "A heavy pair of steel and glass security doors. The panes which cover most of each door are glazed, preventing your from seeing outside."
         keywords = "door,doors,steel door,steel door,metal door,front door,south,south door"
-        AreasFeatures.Feature.__init__(self, description, keywords)
+        super(MainLobbyExteriorDoor109, self).__init__(self, description, keywords)
         
     def open(self, player):
         return "One of the guards approaches you as you move towards the door.\"Heading out, Jacob? I'm pretty sure you've got a couple hours of visiting time left \
 for this week - just let me check your ID card and I'll make sure.\" You inform her that you might go out later, but you don't have time right now as you need to get to Father Malachi's talk."
+
+class JacobsRoomCloset201(AreasFeatures.Container):
+    def __init__(self):
+        description = ["It's closed. The door to the closet is so dilapidated it's almost falling off the hinges. \
+Why is everything in your room in such awful shape?"]
+        keywords = "closet"
+        isOpen = False
+        isAccessible = False
+        blockedDesc = "I can't get to it while I'm tied to this damn table."
+        openDesc = "The door is jammed on its track, but after a strong shove it grudgingly slides open."
+        closeDesc = "With a little effort, you force the door closed."
+        super(JacobsRoomCloset201, self).__init__(description, keywords, isOpen, isAccessible, blockedDesc, openDesc, closeDesc)
+        
+class Bindings201(AreasFeatures.Feature):
+    
+    def __init__(self):
+        description = ["They're made of rope and restrain both your wrists and both your ankles to the bedposts. You're tied quite securely, but the rope isn't very thick and you might be able to manoveure your hands and feet about a foot in each direction.",
+                       "You've managed to free one hand, the rest of the bonds should be easy to cut.",
+                       "With both hands free you can easily finish freeing yourself.",
+                       "The tattered remains of the bindings still hang from the bedposts."]
+        keywords = "bindings,rope,restraints,bonds"
+        super(Bindings201, self).__init__(description, keywords)
+        self.cutActions = ["Sweat drips from your forehead as you twist your right hand in an extremely awkward position to cut the bindings on your right wrist. It works - your right arm is free!",
+                           "You scramble to sever the bindings on your left arm. Done, now on to your legs!",
+                           "Filled with adrenaline, you sever the binding on your right ankle. Just one more!",
+                           "You sever the binding on your left ankle. At last you're free!"]
+    
+    def cutBindings(self, player):
+        if self.state < 3:
+            currentState = self.state
+            if currentState == 3:
+                player.unrestrictPlayer()
+            self.nextState()
+            return self.cutActions[currentState], True
+        else:
+            return "You are already free."

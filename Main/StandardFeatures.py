@@ -51,6 +51,16 @@ class UnlockedContainer(AreasFeatures.Container):
     def __init__(self, description, keywords, openDesc, closeDesc):
         super(UnlockedContainer, self).__init__(description, keywords, False, True, "",openDesc, closeDesc)
         
+    def unlock(self, usedItem):
+        if self.isAccessible:
+            if usedItem == self.itemToOpen:
+                self.isAccessible = True
+                return usedItem.useDescription,True
+            else:
+                return "That key does not seem to fit the lock."
+        else:
+            return "It isn't locked."
+        
 class LockedContainer(AreasFeatures.Container):
     
     def __init__(self, description, keywords, blockedDesc, openDesc, closeDesc, itemToOpen):
@@ -58,11 +68,14 @@ class LockedContainer(AreasFeatures.Container):
         super(LockedContainer, self).__init__(description, keywords, False, False, blockedDesc, openDesc, closeDesc)
         
     def unlock(self, usedItem):
-        if usedItem == self.itemToOpen:
-            self.isAccessible = True
-            return usedItem.useDescription,True
+        if self.isAccessible:
+            if usedItem == self.itemToOpen:
+                self.isAccessible = True
+                return usedItem.useDescription,True
+            else:
+                return "That key does not seem to fit the lock."
         else:
-            return "That key does not seem to fit the lock."
+            return "It isn't locked."
         
 class AlwaysOpenContainer(AreasFeatures.Container):
     
@@ -76,11 +89,10 @@ class AlwaysOpenContainer(AreasFeatures.Container):
         return "You can't close that."
     
     def lookAt(self):
-        desc = self.description
+        desc = self.description + "\n"
         if self.itemsContained:
-            desc += "On it you see:\n"
             for item in self.itemsContained.itervalues():
-                desc += item.seenDescription + "\n"
+                desc += item.initDesc + "\n"
         return desc
     
 class Sign(AreasFeatures.Feature):

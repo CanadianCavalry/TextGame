@@ -142,9 +142,15 @@ class Player(object):
             return "An error occurred during exorcism."
         
     def advance(self, enemy):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         return enemy.playerAdvances()
     
     def retreat(self, enemy):
+        if self.isRestricted:
+            return self.restrictedDesc
+        
         return enemy.playerRetreats()
         
     def wait(self):

@@ -5,9 +5,10 @@ Created on Jun 29, 2014
 '''
 class Area(object):
     
-    def __init__(self, name, description):
+    def __init__(self, name, description, idNum=0):
         self.name = name
         self.description = description
+        self.idNum = idNum
         self.visited = False
         self.roomState = 0
         self.connectedAreas = {}
@@ -22,7 +23,10 @@ class Area(object):
         if self.itemsContained:
             for item in self.itemsContained.itervalues():    #Display all the visible items
                 if item.accessible:
-                    desc += "\n" + item.seenDescription
+                    if item.firstPickup:
+                        desc += "\n" + item.initDesc
+                    else:
+                        desc += "\n" + item.seenDescription
         if self.NPCs or self.enemies:
             desc += "\n"
         if self.NPCs:
@@ -62,7 +66,7 @@ class Area(object):
         
     def addEnemy(self, enemyToAdd):
         self.enemies[enemyToAdd.keywords] = enemyToAdd
-        enemyToAdd.setLocation = self
+        enemyToAdd.setLocation(self)
         
     def removeEnemy(self, enemyToRemove):
         del self.enemies[enemyToRemove.keywords]
@@ -75,18 +79,31 @@ class Area(object):
         del self.NPCs[NPCToRemove.keywords]
         NPCToRemove.removeFromLocation()
          
+    def setIdNum(self, number):
+        self.idNum = number
 
 class Feature(object):
     
-    def __init__(self, description, keywords):
+    def __init__(self, description, keywords, idNum=0):
         self.description = description
+        self.idNum = idNum
         self.keywords = keywords
+        self.state = 0
         
     def lookAt(self):
-        return self.description
+        return self.description[self.state]
     
     def get(self, holder, player):
         return "That isn't something I can pick up."
+    
+    def setIdNum(self, number):
+        self.idNum = number
+        
+    def setState(self, number):
+        self.state = number
+        
+    def nextState(self):
+        self.state += 1
     
 class Container(Feature):
     
@@ -178,6 +195,9 @@ class Link(object):
         
     def setDestination(self, area):
         self.destination = area
+        
+    def setIdNum(self, number):
+        self.idNum = number
     
 class Door(Link):
     
